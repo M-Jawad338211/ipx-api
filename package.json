@@ -1,0 +1,34 @@
+{
+  "name": "ipx-api",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @ipx/api dev",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "openapi": "turbo run openapi",
+    "check": "turbo run typecheck lint test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "bench": "pnpm --filter @ipx/api bench",
+    "update-db": "node --env-file-if-exists=.env scripts/update-db.ts",
+    "update-security": "node --env-file-if-exists=.env scripts/update-security.ts",
+    "build-countries": "node scripts/build-countries.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
+    "turbo": "^2.11.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1"
+  }
+}

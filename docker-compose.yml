@@ -1,0 +1,64 @@
+# Local stack: the API plus Postgres and Redis (used from Phase 2 on).
+# Host ports: API 8080, Postgres ${POSTGRES_HOST_PORT:-5433}, Redis ${REDIS_HOST_PORT:-6379}.
+#   docker compose up --build
+#   curl localhost:8080/json/8.8.8.8
+# Data files live in ./data on the host and are mounted into the API container. Refresh them with
+#   docker compose exec api node scripts/update-db.ts
+#   docker compose exec api node scripts/update-security.ts
+name: ipx
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: ipx-api:dev
+    ports:
+      - '127.0.0.1:8080:8080'
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HOST: 0.0.0.0
+      PORT: '8080'
+      DATA_DIR: /app/data
+      DATABASE_URL: postgres://ipx:ipx@postgres:5432/ipx
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ipx
+      POSTGRES_PASSWORD: ipx
+      POSTGRES_DB: ipx
+    ports:
+      - '127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ipx -d ipx']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: ['redis-server', '--appendonly', 'yes']
+    ports:
+      - '127.0.0.1:${REDIS_HOST_PORT:-6379}:6379'
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:

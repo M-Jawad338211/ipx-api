@@ -1,0 +1,13 @@
+{
+  "name": "@ipx/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "maxmind": "^5.0.8"
+  }
+}

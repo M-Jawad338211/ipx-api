@@ -1,0 +1,28 @@
+{
+  "name": "@ipx/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.ts",
+    "dev": "node --env-file-if-exists=../../.env --watch src/server.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "openapi": "node src/export-openapi.ts",
+    "bench": "node bench/bench.ts"
+  },
+  "dependencies": {
+    "@fastify/swagger": "^9.9.3",
+    "@fastify/type-provider-typebox": "^6.3.0",
+    "@ipx/shared": "workspace:*",
+    "fastify": "^5.12.8",
+    "geo-tz": "^8.1.10",
+    "maxmind": "^5.0.8",
+    "typebox": "^1.4.3"
+  },
+  "devDependencies": {
+    "autocannon": "^8.0.0",
+    "vitest": "^5.0.5"
+  }
+}

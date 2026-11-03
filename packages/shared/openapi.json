@@ -1,0 +1,1806 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ipx IP Lookup API",
+    "version": "1.0.0",
+    "description": "Geolocation, network, time zone, locale and security data for any IPv4 or IPv6 address. IP data by DB-IP (https://db-ip.com, CC BY 4.0) and IPinfo (https://ipinfo.io, CC BY-SA 4.0)."
+  },
+  "components": {
+    "schemas": {}
+  },
+  "paths": {
+    "/v1/json": {
+      "get": {
+        "operationId": "lookupCaller",
+        "summary": "Look up the caller's IP address",
+        "tags": [
+          "Lookup"
+        ],
+        "description": "Returns the lookup result for the IP address the request comes from. Responses are marked `Cache-Control: no-store` because they depend on the caller.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 2000
+            },
+            "in": "query",
+            "name": "fields",
+            "required": false,
+            "description": "Comma-separated fields to return, e.g. `ip,location.country,security`. A group name (`location`) returns the whole group; `success` is always included."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 35
+            },
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "description": "Language for continent and country names: en (default), de, es, fr, ja, pt-BR, ru, zh-CN, fa, ko. Unknown values fall back to English. City and region names are English only."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "in": "query",
+            "name": "callback",
+            "required": false,
+            "description": "JSONP callback name (letters, digits, `_`, `$`, `.`). The response becomes `callback({...});` and is always sent with HTTP 200, errors included."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lookup result for one IP address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "ip",
+                    "type",
+                    "reserved",
+                    "location",
+                    "timezone",
+                    "network",
+                    "locale",
+                    "security"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Always true for a successful lookup.",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "ip": {
+                      "type": "string",
+                      "description": "The IP address, normalized (IPv6 compressed, IPv4-mapped IPv6 as IPv4).",
+                      "examples": [
+                        "8.8.8.8"
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "ipv4",
+                        "ipv6"
+                      ],
+                      "description": "IP version."
+                    },
+                    "reserved": {
+                      "type": "boolean",
+                      "description": "True for private, loopback, link-local, multicast, documentation and other reserved ranges. Location, network and locale fields are then null."
+                    },
+                    "location": {
+                      "type": "object",
+                      "required": [
+                        "continent",
+                        "continent_code",
+                        "country",
+                        "country_code",
+                        "is_eu",
+                        "region",
+                        "city",
+                        "postal",
+                        "latitude",
+                        "longitude"
+                      ],
+                      "properties": {
+                        "continent": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Continent name, localized with `lang=`.",
+                          "examples": [
+                            "North America"
+                          ]
+                        },
+                        "continent_code": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Two-letter continent code: AF, AN, AS, EU, NA, OC or SA.",
+                          "examples": [
+                            "NA"
+                          ]
+                        },
+                        "country": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Country name, localized with `lang=`.",
+                          "examples": [
+                            "United States"
+                          ]
+                        },
+                        "country_code": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "ISO 3166-1 alpha-2 country code.",
+                          "examples": [
+                            "US"
+                          ]
+                        },
+                        "is_eu": {
+                          "type": [
+                            "null",
+                            "boolean"
+                          ],
+                          "description": "Whether the country is a member state of the European Union.",
+                          "examples": [
+                            false
+                          ]
+                        },
+                        "region": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "First-level subdivision (state, province, region). English only.",
+                          "examples": [
+                            "California"
+                          ]
+                        },
+                        "city": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "City name. English only.",
+                          "examples": [
+                            "Mountain View"
+                          ]
+                        },
+                        "postal": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Postal code. Always null with the free data sources.",
+                          "examples": [
+                            null
+                          ]
+                        },
+                        "latitude": {
+                          "type": [
+                            "null",
+                            "number"
+                          ],
+                          "description": "Approximate latitude of the city (WGS 84).",
+                          "examples": [
+                            37.422
+                          ]
+                        },
+                        "longitude": {
+                          "type": [
+                            "null",
+                            "number"
+                          ],
+                          "description": "Approximate longitude of the city (WGS 84).",
+                          "examples": [
+                            -122.085
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Where the IP address is registered or used."
+                    },
+                    "timezone": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "utc_offset",
+                        "utc_offset_seconds",
+                        "is_dst",
+                        "current_time"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "IANA time zone identifier.",
+                          "examples": [
+                            "America/Los_Angeles"
+                          ]
+                        },
+                        "utc_offset": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Current UTC offset as ±HH:MM.",
+                          "examples": [
+                            "-08:00"
+                          ]
+                        },
+                        "utc_offset_seconds": {
+                          "type": [
+                            "null",
+                            "integer"
+                          ],
+                          "description": "Current UTC offset in seconds.",
+                          "examples": [
+                            -28800
+                          ]
+                        },
+                        "is_dst": {
+                          "type": [
+                            "null",
+                            "boolean"
+                          ],
+                          "description": "Whether daylight saving time is in effect right now.",
+                          "examples": [
+                            false
+                          ]
+                        },
+                        "current_time": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Current local time in ISO 8601 format with offset.",
+                          "examples": [
+                            "2026-11-03T05:30:00-08:00"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Time zone at the location, computed per request."
+                    },
+                    "network": {
+                      "type": "object",
+                      "required": [
+                        "asn",
+                        "as_name",
+                        "as_domain"
+                      ],
+                      "properties": {
+                        "asn": {
+                          "type": [
+                            "null",
+                            "integer"
+                          ],
+                          "description": "Autonomous system number.",
+                          "examples": [
+                            15169
+                          ]
+                        },
+                        "as_name": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Name of the organization that operates the AS.",
+                          "examples": [
+                            "Google LLC"
+                          ]
+                        },
+                        "as_domain": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Primary domain of the AS operator.",
+                          "examples": [
+                            "google.com"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "The autonomous system that announces the IP."
+                    },
+                    "locale": {
+                      "type": "object",
+                      "required": [
+                        "flag",
+                        "calling_code",
+                        "currency",
+                        "languages"
+                      ],
+                      "properties": {
+                        "flag": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Country flag emoji.",
+                          "examples": [
+                            "🇺🇸"
+                          ]
+                        },
+                        "calling_code": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "International calling code.",
+                          "examples": [
+                            "+1"
+                          ]
+                        },
+                        "currency": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "required": [
+                                "code",
+                                "name",
+                                "symbol"
+                              ],
+                              "properties": {
+                                "code": {
+                                  "type": "string",
+                                  "description": "ISO 4217 currency code.",
+                                  "examples": [
+                                    "USD"
+                                  ]
+                                },
+                                "name": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Currency name in English.",
+                                  "examples": [
+                                    "United States dollar"
+                                  ]
+                                },
+                                "symbol": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Currency symbol.",
+                                  "examples": [
+                                    "$"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "description": "Main currency of the country, or null when unknown."
+                        },
+                        "languages": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "code",
+                              "name"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "description": "ISO 639-3 language code.",
+                                "examples": [
+                                  "eng"
+                                ]
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "Language name in English.",
+                                "examples": [
+                                  "English"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "description": "Official or main languages of the country; empty when unknown."
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Country facts derived from the country code."
+                    },
+                    "security": {
+                      "type": "object",
+                      "required": [
+                        "is_tor",
+                        "is_proxy",
+                        "is_vpn",
+                        "is_hosting",
+                        "hosting_provider",
+                        "source"
+                      ],
+                      "properties": {
+                        "is_tor": {
+                          "type": "boolean",
+                          "description": "Whether the IP is a current Tor exit node."
+                        },
+                        "is_proxy": {
+                          "type": "boolean",
+                          "description": "Whether the IP is a known open or residential proxy. Always false with source \"basic\"."
+                        },
+                        "is_vpn": {
+                          "type": "boolean",
+                          "description": "Whether the IP belongs to a VPN service. Always false with source \"basic\"."
+                        },
+                        "is_hosting": {
+                          "type": "boolean",
+                          "description": "Whether the IP is in a published cloud or hosting provider range."
+                        },
+                        "hosting_provider": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Provider whose published ranges contain the IP.",
+                          "examples": [
+                            "Google"
+                          ]
+                        },
+                        "source": {
+                          "type": "string",
+                          "enum": [
+                            "basic"
+                          ],
+                          "description": "Which security dataset produced these flags. \"basic\" = public Tor and cloud lists only."
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Risk signals merged from public IP lists."
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Lookup result for one IP address."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`)."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The IP databases are not loaded (`service_unavailable`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "The IP databases are not loaded (`service_unavailable`)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/json/{ip}": {
+      "get": {
+        "operationId": "lookupIp",
+        "summary": "Look up an IP address",
+        "tags": [
+          "Lookup"
+        ],
+        "description": "Returns geolocation, network, time zone, locale and security data for one IPv4 or IPv6 address. Private and reserved addresses return HTTP 200 with `reserved: true`.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 2000
+            },
+            "in": "query",
+            "name": "fields",
+            "required": false,
+            "description": "Comma-separated fields to return, e.g. `ip,location.country,security`. A group name (`location`) returns the whole group; `success` is always included."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 35
+            },
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "description": "Language for continent and country names: en (default), de, es, fr, ja, pt-BR, ru, zh-CN, fa, ko. Unknown values fall back to English. City and region names are English only."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "in": "query",
+            "name": "callback",
+            "required": false,
+            "description": "JSONP callback name (letters, digits, `_`, `$`, `.`). The response becomes `callback({...});` and is always sent with HTTP 200, errors included."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "example": "8.8.8.8",
+            "in": "path",
+            "name": "ip",
+            "required": true,
+            "description": "IPv4 or IPv6 address to look up."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lookup result for one IP address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "ip",
+                    "type",
+                    "reserved",
+                    "location",
+                    "timezone",
+                    "network",
+                    "locale",
+                    "security"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Always true for a successful lookup.",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "ip": {
+                      "type": "string",
+                      "description": "The IP address, normalized (IPv6 compressed, IPv4-mapped IPv6 as IPv4).",
+                      "examples": [
+                        "8.8.8.8"
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "ipv4",
+                        "ipv6"
+                      ],
+                      "description": "IP version."
+                    },
+                    "reserved": {
+                      "type": "boolean",
+                      "description": "True for private, loopback, link-local, multicast, documentation and other reserved ranges. Location, network and locale fields are then null."
+                    },
+                    "location": {
+                      "type": "object",
+                      "required": [
+                        "continent",
+                        "continent_code",
+                        "country",
+                        "country_code",
+                        "is_eu",
+                        "region",
+                        "city",
+                        "postal",
+                        "latitude",
+                        "longitude"
+                      ],
+                      "properties": {
+                        "continent": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Continent name, localized with `lang=`.",
+                          "examples": [
+                            "North America"
+                          ]
+                        },
+                        "continent_code": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Two-letter continent code: AF, AN, AS, EU, NA, OC or SA.",
+                          "examples": [
+                            "NA"
+                          ]
+                        },
+                        "country": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Country name, localized with `lang=`.",
+                          "examples": [
+                            "United States"
+                          ]
+                        },
+                        "country_code": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "ISO 3166-1 alpha-2 country code.",
+                          "examples": [
+                            "US"
+                          ]
+                        },
+                        "is_eu": {
+                          "type": [
+                            "null",
+                            "boolean"
+                          ],
+                          "description": "Whether the country is a member state of the European Union.",
+                          "examples": [
+                            false
+                          ]
+                        },
+                        "region": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "First-level subdivision (state, province, region). English only.",
+                          "examples": [
+                            "California"
+                          ]
+                        },
+                        "city": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "City name. English only.",
+                          "examples": [
+                            "Mountain View"
+                          ]
+                        },
+                        "postal": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Postal code. Always null with the free data sources.",
+                          "examples": [
+                            null
+                          ]
+                        },
+                        "latitude": {
+                          "type": [
+                            "null",
+                            "number"
+                          ],
+                          "description": "Approximate latitude of the city (WGS 84).",
+                          "examples": [
+                            37.422
+                          ]
+                        },
+                        "longitude": {
+                          "type": [
+                            "null",
+                            "number"
+                          ],
+                          "description": "Approximate longitude of the city (WGS 84).",
+                          "examples": [
+                            -122.085
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Where the IP address is registered or used."
+                    },
+                    "timezone": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "utc_offset",
+                        "utc_offset_seconds",
+                        "is_dst",
+                        "current_time"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "IANA time zone identifier.",
+                          "examples": [
+                            "America/Los_Angeles"
+                          ]
+                        },
+                        "utc_offset": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Current UTC offset as ±HH:MM.",
+                          "examples": [
+                            "-08:00"
+                          ]
+                        },
+                        "utc_offset_seconds": {
+                          "type": [
+                            "null",
+                            "integer"
+                          ],
+                          "description": "Current UTC offset in seconds.",
+                          "examples": [
+                            -28800
+                          ]
+                        },
+                        "is_dst": {
+                          "type": [
+                            "null",
+                            "boolean"
+                          ],
+                          "description": "Whether daylight saving time is in effect right now.",
+                          "examples": [
+                            false
+                          ]
+                        },
+                        "current_time": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Current local time in ISO 8601 format with offset.",
+                          "examples": [
+                            "2026-11-03T05:30:00-08:00"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Time zone at the location, computed per request."
+                    },
+                    "network": {
+                      "type": "object",
+                      "required": [
+                        "asn",
+                        "as_name",
+                        "as_domain"
+                      ],
+                      "properties": {
+                        "asn": {
+                          "type": [
+                            "null",
+                            "integer"
+                          ],
+                          "description": "Autonomous system number.",
+                          "examples": [
+                            15169
+                          ]
+                        },
+                        "as_name": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Name of the organization that operates the AS.",
+                          "examples": [
+                            "Google LLC"
+                          ]
+                        },
+                        "as_domain": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Primary domain of the AS operator.",
+                          "examples": [
+                            "google.com"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "The autonomous system that announces the IP."
+                    },
+                    "locale": {
+                      "type": "object",
+                      "required": [
+                        "flag",
+                        "calling_code",
+                        "currency",
+                        "languages"
+                      ],
+                      "properties": {
+                        "flag": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Country flag emoji.",
+                          "examples": [
+                            "🇺🇸"
+                          ]
+                        },
+                        "calling_code": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "International calling code.",
+                          "examples": [
+                            "+1"
+                          ]
+                        },
+                        "currency": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "required": [
+                                "code",
+                                "name",
+                                "symbol"
+                              ],
+                              "properties": {
+                                "code": {
+                                  "type": "string",
+                                  "description": "ISO 4217 currency code.",
+                                  "examples": [
+                                    "USD"
+                                  ]
+                                },
+                                "name": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Currency name in English.",
+                                  "examples": [
+                                    "United States dollar"
+                                  ]
+                                },
+                                "symbol": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Currency symbol.",
+                                  "examples": [
+                                    "$"
+                                  ]
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "description": "Main currency of the country, or null when unknown."
+                        },
+                        "languages": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "code",
+                              "name"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "description": "ISO 639-3 language code.",
+                                "examples": [
+                                  "eng"
+                                ]
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "Language name in English.",
+                                "examples": [
+                                  "English"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "description": "Official or main languages of the country; empty when unknown."
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Country facts derived from the country code."
+                    },
+                    "security": {
+                      "type": "object",
+                      "required": [
+                        "is_tor",
+                        "is_proxy",
+                        "is_vpn",
+                        "is_hosting",
+                        "hosting_provider",
+                        "source"
+                      ],
+                      "properties": {
+                        "is_tor": {
+                          "type": "boolean",
+                          "description": "Whether the IP is a current Tor exit node."
+                        },
+                        "is_proxy": {
+                          "type": "boolean",
+                          "description": "Whether the IP is a known open or residential proxy. Always false with source \"basic\"."
+                        },
+                        "is_vpn": {
+                          "type": "boolean",
+                          "description": "Whether the IP belongs to a VPN service. Always false with source \"basic\"."
+                        },
+                        "is_hosting": {
+                          "type": "boolean",
+                          "description": "Whether the IP is in a published cloud or hosting provider range."
+                        },
+                        "hosting_provider": {
+                          "type": [
+                            "null",
+                            "string"
+                          ],
+                          "description": "Provider whose published ranges contain the IP.",
+                          "examples": [
+                            "Google"
+                          ]
+                        },
+                        "source": {
+                          "type": "string",
+                          "enum": [
+                            "basic"
+                          ],
+                          "description": "Which security dataset produced these flags. \"basic\" = public Tor and cloud lists only."
+                        }
+                      },
+                      "additionalProperties": false,
+                      "description": "Risk signals merged from public IP lists."
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Lookup result for one IP address."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`)."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The IP databases are not loaded (`service_unavailable`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "The IP databases are not loaded (`service_unavailable`)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Service health and data freshness",
+        "tags": [
+          "System"
+        ],
+        "description": "HTTP 200 when both IP databases are loaded, 503 (`status: \"degraded\"`) otherwise. Includes the build date and age of each database and list.",
+        "responses": {
+          "200": {
+            "description": "Service health and data freshness.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "uptime_seconds",
+                    "memory_rss_mb",
+                    "databases",
+                    "lists",
+                    "countries"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ],
+                      "description": "\"degraded\" when an IP database is missing or failed to load."
+                    },
+                    "uptime_seconds": {
+                      "type": "number"
+                    },
+                    "memory_rss_mb": {
+                      "type": "number"
+                    },
+                    "databases": {
+                      "type": "object",
+                      "required": [
+                        "city",
+                        "asn"
+                      ],
+                      "properties": {
+                        "city": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "database_type",
+                            "build_date",
+                            "age_days",
+                            "loaded_at",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "database_type": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Type string from the mmdb metadata.",
+                              "examples": [
+                                "DBIP-City-Lite"
+                              ]
+                            },
+                            "build_date": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Build date from the mmdb metadata (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_days": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Days since the database was built.",
+                              "examples": [
+                                2.4
+                              ]
+                            },
+                            "loaded_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When this process loaded the file (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        },
+                        "asn": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "database_type",
+                            "build_date",
+                            "age_days",
+                            "loaded_at",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "database_type": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Type string from the mmdb metadata.",
+                              "examples": [
+                                "DBIP-City-Lite"
+                              ]
+                            },
+                            "build_date": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Build date from the mmdb metadata (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_days": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Days since the database was built.",
+                              "examples": [
+                                2.4
+                              ]
+                            },
+                            "loaded_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When this process loaded the file (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "lists": {
+                      "type": "object",
+                      "required": [
+                        "tor",
+                        "hosting"
+                      ],
+                      "properties": {
+                        "tor": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "entries",
+                            "updated_at",
+                            "age_hours",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "entries": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When the list was downloaded (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_hours": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Hours since the list was downloaded.",
+                              "examples": [
+                                1.5
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        },
+                        "hosting": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "entries",
+                            "updated_at",
+                            "age_hours",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "entries": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When the list was downloaded (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_hours": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Hours since the list was downloaded.",
+                              "examples": [
+                                1.5
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "countries": {
+                      "type": "integer",
+                      "description": "Countries in the enrichment table."
+                    }
+                  },
+                  "description": "Service health and data freshness."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service health and data freshness.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "uptime_seconds",
+                    "memory_rss_mb",
+                    "databases",
+                    "lists",
+                    "countries"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ],
+                      "description": "\"degraded\" when an IP database is missing or failed to load."
+                    },
+                    "uptime_seconds": {
+                      "type": "number"
+                    },
+                    "memory_rss_mb": {
+                      "type": "number"
+                    },
+                    "databases": {
+                      "type": "object",
+                      "required": [
+                        "city",
+                        "asn"
+                      ],
+                      "properties": {
+                        "city": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "database_type",
+                            "build_date",
+                            "age_days",
+                            "loaded_at",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "database_type": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Type string from the mmdb metadata.",
+                              "examples": [
+                                "DBIP-City-Lite"
+                              ]
+                            },
+                            "build_date": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Build date from the mmdb metadata (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_days": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Days since the database was built.",
+                              "examples": [
+                                2.4
+                              ]
+                            },
+                            "loaded_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When this process loaded the file (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        },
+                        "asn": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "database_type",
+                            "build_date",
+                            "age_days",
+                            "loaded_at",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "database_type": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Type string from the mmdb metadata.",
+                              "examples": [
+                                "DBIP-City-Lite"
+                              ]
+                            },
+                            "build_date": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Build date from the mmdb metadata (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_days": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Days since the database was built.",
+                              "examples": [
+                                2.4
+                              ]
+                            },
+                            "loaded_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When this process loaded the file (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "lists": {
+                      "type": "object",
+                      "required": [
+                        "tor",
+                        "hosting"
+                      ],
+                      "properties": {
+                        "tor": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "entries",
+                            "updated_at",
+                            "age_hours",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "entries": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When the list was downloaded (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_hours": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Hours since the list was downloaded.",
+                              "examples": [
+                                1.5
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        },
+                        "hosting": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "entries",
+                            "updated_at",
+                            "age_hours",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "entries": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When the list was downloaded (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_hours": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Hours since the list was downloaded.",
+                              "examples": [
+                                1.5
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "countries": {
+                      "type": "integer",
+                      "description": "Countries in the enrichment table."
+                    }
+                  },
+                  "description": "Service health and data freshness."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Lookup",
+      "description": "IP address lookups."
+    },
+    {
+      "name": "System",
+      "description": "Health and operations."
+    }
+  ]
+}

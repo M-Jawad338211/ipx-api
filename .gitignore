@@ -1,0 +1,19 @@
+# dependencies and build output
+node_modules/
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# downloaded data (mmdb files, security lists)
+data/*
+!data/.gitkeep
+
+# misc
+*.log
+.DS_Store

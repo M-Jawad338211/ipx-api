@@ -1,0 +1,7 @@
+{
+  "source": "https://check.torproject.org/exit-addresses",
+  "fetched_at": "2026-11-03T13:28:35.692Z",
+  "count": 3,
+  "note": "Checked-in sample of real exit addresses for tests; refresh with live data via RUN_LIVE_TESTS=1.",
+  "addresses": ["171.25.193.25", "185.220.101.0", "185.220.101.1"]
+}
