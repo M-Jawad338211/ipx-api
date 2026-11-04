@@ -23,9 +23,7 @@ export function paddleConfig(
     clientToken,
     environment: env.PADDLE_ENVIRONMENT === 'production' ? 'production' : 'sandbox',
     prices: {
-      starter: env.PADDLE_PRICE_STARTER || undefined,
       pro: env.PADDLE_PRICE_PRO || undefined,
-      business: env.PADDLE_PRICE_BUSINESS || undefined,
     },
   };
 }

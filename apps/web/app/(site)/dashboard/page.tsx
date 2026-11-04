@@ -97,7 +97,7 @@ export default async function DashboardPage(props: PageProps<'/dashboard'>) {
                 (p) => (
                   <CheckoutButton
                     key={p.id}
-                    label={`Upgrade to ${p.name} (${p.monthlyQuota.toLocaleString('en-US')}/mo)`}
+                    label={`Upgrade to ${p.name}: $${(p.priceCents ?? 0) / 100}/month, ${p.monthlyQuota.toLocaleString('en-US')} lookups`}
                     priceId={paddle.prices[p.id]!}
                     clientToken={paddle.clientToken}
                     environment={paddle.environment}
@@ -108,14 +108,16 @@ export default async function DashboardPage(props: PageProps<'/dashboard'>) {
               )
             ) : (
               <p className="text-sm text-fd-muted-foreground">
-                Need more lookups?{' '}
+                {plan.plan.id === 'pro' ? 'Questions about your plan?' : 'Need more lookups?'}{' '}
                 <a
                   href={`mailto:${env.contactEmail}`}
                   className="font-medium text-fd-foreground underline underline-offset-4"
                 >
                   Contact us
                 </a>{' '}
-                about the Starter, Pro and Business plans.
+                {plan.plan.id === 'pro'
+                  ? 'any time.'
+                  : 'to upgrade to Pro: $20/month for 1,000,000 lookups.'}
               </p>
             )}
           </div>

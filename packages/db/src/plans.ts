@@ -1,5 +1,5 @@
 export interface PlanDefinition {
-  id: 'free' | 'starter' | 'pro' | 'business';
+  id: 'free' | 'pro';
   name: string;
   /** Lookups per calendar month (UTC), shared by all keys of an account. */
   monthlyQuota: number;
@@ -11,9 +11,7 @@ export interface PlanDefinition {
 /** Plan catalogue. `pnpm --filter @ipx/db migrate` upserts these rows into the plans table. */
 export const PLANS: readonly PlanDefinition[] = [
   { id: 'free', name: 'Free', monthlyQuota: 10_000, priceCents: 0, sortOrder: 0 },
-  { id: 'starter', name: 'Starter', monthlyQuota: 100_000, priceCents: null, sortOrder: 1 },
-  { id: 'pro', name: 'Pro', monthlyQuota: 1_000_000, priceCents: null, sortOrder: 2 },
-  { id: 'business', name: 'Business', monthlyQuota: 5_000_000, priceCents: null, sortOrder: 3 },
+  { id: 'pro', name: 'Pro', monthlyQuota: 1_000_000, priceCents: 2000, sortOrder: 1 },
 ];
 
 export const FREE_PLAN = PLANS[0]!;

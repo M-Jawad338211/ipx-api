@@ -307,7 +307,7 @@ describe('Paddle billing', () => {
 
   it('maps subscription events to the plan of the price', async () => {
     const user = await signUp(db(), { email: email(), password: 'password123' });
-    const prices = { starter: 'pri_starter', pro: 'pri_pro' };
+    const prices = { pro: 'pri_pro' };
     const event = (eventType: string, status: string, priceId = 'pri_pro') => ({
       event_type: eventType,
       data: {
@@ -324,14 +324,10 @@ describe('Paddle billing', () => {
     );
     expect((await currentPlan(db(), user.id)).plan.id).toBe('pro');
 
-    await handlePaddleEvent(db(), event('subscription.updated', 'active', 'pri_starter'), prices);
-    expect((await currentPlan(db(), user.id)).plan.id).toBe('starter');
+    await handlePaddleEvent(db(), event('subscription.updated', 'past_due'), prices);
+    expect((await currentPlan(db(), user.id)).plan.id).toBe('pro'); // grace while payment retries
 
-    await handlePaddleEvent(
-      db(),
-      event('subscription.canceled', 'canceled', 'pri_starter'),
-      prices,
-    );
+    await handlePaddleEvent(db(), event('subscription.canceled', 'canceled'), prices);
     const after = await currentPlan(db(), user.id);
     expect(after).toMatchObject({ plan: { id: 'free' }, status: 'canceled' });
     const rows = await db().select().from(subscriptions).where(eq(subscriptions.userId, user.id));

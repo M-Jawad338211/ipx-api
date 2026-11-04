@@ -117,7 +117,10 @@ try {
     console.log(`Running: ${scenario.name} (${DURATION} s)`);
     const r = await run(scenario, DURATION);
     const failures = r.errors + r.timeouts + r.non2xx;
-    if (failures > 0) console.log(`  failures: ${JSON.stringify({ errors: r.errors, timeouts: r.timeouts, non2xx: r.non2xx, codes: r.statusCodeStats })}`);
+    if (failures > 0)
+      console.log(
+        `  failures: ${JSON.stringify({ errors: r.errors, timeouts: r.timeouts, non2xx: r.non2xx, codes: r.statusCodeStats })}`,
+      );
     rows.push([
       scenario.name,
       Math.round(r.requests.average).toLocaleString('en-US'),

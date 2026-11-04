@@ -25,12 +25,10 @@ curl "https://api.example.com/v1/json/8.8.8.8?key=ipx_your_key"
 
 Keys are not subject to the per-IP limits. Every lookup counts against the monthly quota of your account, shared by all its keys:
 
-| Plan     | Lookups per month |
-| -------- | ----------------- |
-| Free     | 10,000            |
-| Starter  | 100,000           |
-| Pro      | 1,000,000         |
-| Business | 5,000,000         |
+| Plan | Price     | Lookups per month |
+| ---- | --------- | ----------------- |
+| Free | $0        | 10,000            |
+| Pro  | $20/month | 1,000,000         |
 
 Quotas reset at the start of each calendar month (UTC). Usage appears in the dashboard within a minute or two. A revoked key stops working within a minute.
 

@@ -70,7 +70,7 @@ Provide `.env.example` with every variable and a one-line comment.
 ## Phase 2 — Keys, limits, website (3–5 days)
 
 10. Postgres schema in `packages/db` (Drizzle + migrations): `users`, `api_keys` (hashed, prefix shown once), `plans`, `subscriptions`, `usage_daily (key_id, date, count)`.
-11. Auth: `?key=` or `Authorization: Bearer`. Anonymous allowed on `/json` and `/json/:ip` with per-IP limits (1,000/day, 45/min) via Redis sliding window. Keyed plans: Free 10k/mo · Starter 100k · Pro 1M · Business 5M. Send `X-RateLimit-Limit/Remaining/Reset`; 429 with `Retry-After`.
+11. Auth: `?key=` or `Authorization: Bearer`. Anonymous allowed on `/json` and `/json/:ip` with per-IP limits (1,000/day, 45/min) via Redis sliding window. Keyed plans: Free $0, 10k/mo · Pro $20/month, 1M/mo (the only paid plan). Send `X-RateLimit-Limit/Remaining/Reset`; 429 with `Retry-After`.
 12. Usage: increment a Redis counter per key per day; one in-process loop flushes to Postgres every 60 s. No queue.
 13. `POST /v1/batch` — keyed only, max 100 IPs, same per-item shape.
 14. `apps/web` (Next.js 16, Tailwind 4, shadcn/ui, Fumadocs):
@@ -80,7 +80,7 @@ Provide `.env.example` with every variable and a one-line comment.
     - Dashboard: keys CRUD (max 10 active, secret shown once), usage chart (last 30 days, plain SVG), current plan and monthly quota bar.
     - `/credits` attribution page (DB-IP link, IPinfo, Tor Project, mledoze/countries) and footer link.
     - `/terms`, `/privacy` drafts with an accuracy disclaimer and IP-retention statement (I will review).
-15. Billing: Paddle checkout + webhook → `subscriptions.plan`. Everything behind `PAYMENTS_ENABLED=false` until I supply keys; dashboard shows "contact us" meanwhile. Needs `PADDLE_CLIENT_TOKEN`, `PADDLE_ENVIRONMENT`, `PADDLE_PRICE_STARTER/PRO/BUSINESS` and `PADDLE_WEBHOOK_SECRET`; paid-plan prices are still to be decided (shown as "Contact us").
+15. Billing: Paddle checkout + webhook → `subscriptions.plan`. Everything behind `PAYMENTS_ENABLED=false` until I supply keys; dashboard shows "contact us" meanwhile. Needs `PADDLE_CLIENT_TOKEN`, `PADDLE_ENVIRONMENT`, `PADDLE_PRICE_PRO` and `PADDLE_WEBHOOK_SECRET`.
     - Implementation notes: accounts live in the Next.js app (server actions over `packages/db`); the Fastify API only validates keys (in-memory cache, 60 s), enforces limits in Redis (Lua sliding windows for anonymous callers, IPv6 per /64; monthly quota per account for keys) and flushes per-key daily usage to Postgres. Without Redis the limits fail open; without Postgres, keyed requests get `503`.
 
 **Acceptance:** sign up → create key → request with key → usage appears in dashboard; anonymous limits enforced; batch rejects anonymous callers.

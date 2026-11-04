@@ -4,11 +4,11 @@
  */
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { sql } from 'drizzle-orm';
+import { and, notExists, notInArray, sql } from 'drizzle-orm';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import { createDb } from './client.ts';
 import { PLANS } from './plans.ts';
-import { plans } from './schema.ts';
+import { plans, subscriptions } from './schema.ts';
 
 const MIGRATIONS = path.resolve(import.meta.dirname, '../drizzle');
 
@@ -30,6 +30,21 @@ export async function migrateDatabase(url: string): Promise<void> {
           },
         });
     }
+    // Remove plans that left the catalogue, unless a subscription still points at them.
+    await db.delete(plans).where(
+      and(
+        notInArray(
+          plans.id,
+          PLANS.map((p) => p.id),
+        ),
+        notExists(
+          db
+            .select()
+            .from(subscriptions)
+            .where(sql`${subscriptions.planId} = ${plans.id}`),
+        ),
+      ),
+    );
   } finally {
     await close();
   }

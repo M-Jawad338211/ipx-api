@@ -29,9 +29,9 @@ const FEATURES = [
 ];
 
 function price(cents: number | null): string {
-  if (cents === 0) return 'Free';
+  if (cents === 0) return '$0';
   if (cents === null) return 'Contact us';
-  return `$${(cents / 100).toLocaleString('en-US')}/mo`;
+  return `$${(cents / 100).toLocaleString('en-US')} / month`;
 }
 
 export default function HomePage() {
@@ -82,7 +82,7 @@ export default function HomePage() {
           {ANONYMOUS_LIMITS.perDay.toLocaleString('en-US')} per day per IP. With a key, no
           per-minute limit and a monthly quota shared by all your keys.
         </p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid max-w-3xl gap-4 sm:grid-cols-2">
           {PLANS.map((plan) => (
             <Card key={plan.id} className="flex flex-col">
               <h3 className="font-medium">{plan.name}</h3>
