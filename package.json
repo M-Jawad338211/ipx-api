@@ -11,7 +11,7 @@
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "openapi": "turbo run openapi",
+    "openapi": "turbo run openapi && node scripts/postman.ts",
     "check": "turbo run typecheck lint test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -22,7 +22,10 @@
     "db:migrate": "pnpm --filter @ipx/db migrate",
     "db:generate": "pnpm --filter @ipx/db generate",
     "dev:web": "pnpm --filter @ipx/web dev",
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "check-freshness": "node --env-file-if-exists=.env scripts/check-freshness.ts",
+    "export-corrections": "node --env-file-if-exists=.env scripts/export-corrections.ts",
+    "postman": "node scripts/postman.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

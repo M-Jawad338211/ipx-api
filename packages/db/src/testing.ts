@@ -27,7 +27,7 @@ export async function prepareTestDatabase(name: string): Promise<string> {
   const db = postgres(url, { max: 1, onnotice: () => {} });
   try {
     await db.unsafe(
-      'truncate table usage_daily, api_keys, subscriptions, email_verification_codes, sessions, users cascade',
+      'truncate table corrections, usage_daily, api_keys, subscriptions, email_verification_codes, sessions, users cascade',
     );
   } finally {
     await db.end({ timeout: 5 });

@@ -5,12 +5,14 @@ import { clientIp } from '../http/client-ip.ts';
 import { HttpError } from '../http/errors.ts';
 import { parseIp } from '../ip.ts';
 import type { KeyResolver } from './keys.ts';
+import type { Metrics } from '../metrics.ts';
 import type { LimitDecision, Limiter } from './limiter.ts';
 
 export interface AccessServices {
   config: Config;
   limiter: Limiter | null;
   keys: KeyResolver | null;
+  metrics?: Metrics | null;
 }
 
 export interface AccessGrant {
@@ -97,6 +99,7 @@ export async function authorize(
     }
     setLimitHeaders(reply, decision);
     if (!decision.allowed) {
+      services.metrics?.rateLimited.inc({ kind: 'anonymous' });
       throw denied(
         reply,
         decision,
@@ -143,6 +146,7 @@ export async function authorize(
     if (decision) {
       setLimitHeaders(reply, decision);
       if (!decision.allowed) {
+        services.metrics?.rateLimited.inc({ kind: 'key' });
         throw denied(
           reply,
           decision,

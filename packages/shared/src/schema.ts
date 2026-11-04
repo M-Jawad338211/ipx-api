@@ -258,8 +258,12 @@ export const Health = Type.Object(
     uptime_seconds: Type.Number(),
     memory_rss_mb: Type.Number(),
     databases: Type.Object({ city: DatabaseStatus, asn: DatabaseStatus }),
-    lists: Type.Object({ tor: ListStatus, hosting: ListStatus }),
+    lists: Type.Object({ tor: ListStatus, hosting: ListStatus, overrides: ListStatus }),
     countries: Type.Integer({ description: 'Countries in the enrichment table.' }),
+    warnings: Type.Array(Type.String(), {
+      description:
+        'Stale or missing data: a database older than 45 days, a Tor list older than 6 hours, a hosting list older than 3 days.',
+    }),
     services: Type.Object({
       redis: stringEnum(['ok', 'error', 'disabled'] as const, 'Rate limits and usage counters.'),
       database: stringEnum(['ok', 'error', 'disabled'] as const, 'API keys and accounts.'),

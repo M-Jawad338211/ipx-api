@@ -1,0 +1,113 @@
+# Production stack for one server (see deploy/README.md).
+#   Cloudflare Tunnel -> caddy -> api-blue/api-green and web-blue/web-green
+# Two copies of the API and the website run side by side so deploys restart one at a time
+# while Caddy sends traffic to the other (zero downtime). Nothing is published on the host.
+name: ipx
+
+x-api: &api
+  image: ${IPX_API_IMAGE:?run deploy.sh to set the image}
+  env_file: [.env]
+  environment:
+    NODE_ENV: production
+    HOST: 0.0.0.0
+    PORT: '8080'
+    DATA_DIR: /app/data
+    TRUSTED_PROXY: cloudflare
+    IPX_SERVER_NAME: ${IPX_SERVER_NAME:-production}
+    DATABASE_URL: postgres://ipx:${POSTGRES_PASSWORD:?}@postgres:5432/ipx
+    REDIS_URL: redis://redis:6379
+  volumes:
+    - ${IPX_DATA_DIR:-./data}:/app/data
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+  restart: unless-stopped
+  stop_grace_period: 20s
+  logging: &logging
+    driver: json-file
+    options: { max-size: 20m, max-file: '5' }
+
+x-web: &web
+  image: ${IPX_WEB_IMAGE:?run deploy.sh to set the image}
+  env_file: [.env]
+  environment:
+    NODE_ENV: production
+    TRUSTED_PROXY: cloudflare
+    DATABASE_URL: postgres://ipx:${POSTGRES_PASSWORD:?}@postgres:5432/ipx
+    REDIS_URL: redis://redis:6379
+  depends_on:
+    postgres: { condition: service_healthy }
+  restart: unless-stopped
+  stop_grace_period: 20s
+  logging: *logging
+
+services:
+  api-blue: *api
+  api-green: *api
+  web-blue: *web
+  web-green: *web
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      API_HOST: ${API_HOST:?set API_HOST in .env}
+      SITE_HOST: ${SITE_HOST:?set SITE_HOST in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    ports:
+      # Only for local testing / health checks from the host; Cloudflare reaches caddy:80 directly.
+      - '127.0.0.1:${CADDY_LOCAL_PORT:-8088}:80'
+    restart: unless-stopped
+    logging: *logging
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
+    depends_on: [caddy]
+    restart: unless-stopped
+    profiles: [tunnel]
+    logging: *logging
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ipx
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ipx
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ipx -d ipx']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    logging: *logging
+
+  redis:
+    image: redis:8-alpine
+    command:
+      [
+        'redis-server',
+        '--appendonly',
+        'yes',
+        '--maxmemory',
+        '256mb',
+        '--maxmemory-policy',
+        'noeviction',
+      ]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    logging: *logging
+
+volumes:
+  pgdata:
+  redisdata:

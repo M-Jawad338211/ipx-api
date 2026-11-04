@@ -1,0 +1,16 @@
+**/node_modules
+**/dist
+**/coverage
+**/.turbo
+**/.next
+.git
+.github
+data
+.env
+.env.*
+*.log
+.DS_Store
+apps/web
+apps/api/test
+apps/api/bench
+**/*.test.ts

@@ -20,8 +20,12 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
             </a>
             .
           </p>
-          <nav className="flex gap-4">
+          <nav className="flex flex-wrap gap-4">
             <Link href="/docs">Docs</Link>
+            {process.env.NEXT_PUBLIC_STATUS_URL && (
+              <a href={process.env.NEXT_PUBLIC_STATUS_URL}>Status</a>
+            )}
+            <Link href="/correct">Report a wrong location</Link>
             <Link href="/credits">Credits</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>

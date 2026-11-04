@@ -1,0 +1,55 @@
+# External uptime checks for the public status page, every 5 minutes (GitHub may delay runs).
+# Results and the rendered page live on the `status-data` branch, served by GitHub Pages.
+#
+# Variables: STATUS_CHECKS  e.g. "API=https://api.example.com/health,Website=https://example.com/"
+#            STATUS_DOMAIN  e.g. "status.example.com" (custom domain for GitHub Pages)
+name: Status
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: status
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: vars.STATUS_CHECKS != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check out the status branch
+        run: |
+          if git ls-remote --exit-code --heads origin status-data >/dev/null; then
+            git fetch --depth 1 origin status-data
+            git worktree add status-site origin/status-data
+          else
+            git worktree add --detach status-site
+            git -C status-site checkout --orphan status-data
+            git -C status-site rm -rf --quiet .
+            echo '[]' > status-site/incidents.json
+          fi
+      - name: Run the checks
+        env:
+          STATUS_CHECKS: ${{ vars.STATUS_CHECKS }}
+        run: |
+          DOMAIN_ARGS=()
+          if [ -n "${{ vars.STATUS_DOMAIN }}" ]; then DOMAIN_ARGS=(--domain "${{ vars.STATUS_DOMAIN }}"); fi
+          node scripts/status-check.ts --dir status-site "${DOMAIN_ARGS[@]}"
+      - name: Publish
+        working-directory: status-site
+        run: |
+          git config user.name "ipx-status"
+          git config user.email "ipx-status@users.noreply.github.com"
+          git add -A
+          git commit --quiet -m "status: $(date -u +%Y-%m-%dT%H:%MZ)" || exit 0
+          git push --quiet origin HEAD:status-data

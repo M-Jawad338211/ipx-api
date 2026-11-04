@@ -1,0 +1,11 @@
+[Unit]
+Description=Alert on stale data or unhealthy services
+After=docker.service
+Requires=docker.service
+OnFailure=ipx-alert@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/ipx
+ExecStart=/opt/ipx/bin/run-job.sh check-freshness
+TimeoutStartSec=30min

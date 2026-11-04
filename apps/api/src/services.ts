@@ -4,6 +4,7 @@ import { Redis } from 'ioredis';
 import type { Config } from './config.ts';
 import type { StoreLogger } from './data/store.ts';
 import type { AccessServices } from './limits/access.ts';
+import type { Metrics } from './metrics.ts';
 import { KeyResolver } from './limits/keys.ts';
 import { Limiter } from './limits/limiter.ts';
 import { UsageFlusher } from './limits/usage.ts';
@@ -18,6 +19,7 @@ export class Services implements AccessServices {
   readonly limiter: Limiter | null;
   readonly keys: KeyResolver | null;
   readonly usage: UsageFlusher | null;
+  metrics: Metrics | null = null;
   readonly #closeDb: (() => Promise<void>) | null;
   readonly #log: StoreLogger;
 

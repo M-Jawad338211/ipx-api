@@ -103,3 +103,28 @@ export const usageDaily = pgTable(
   },
   (t) => [primaryKey({ columns: [t.keyId, t.date] })],
 );
+
+/** Location corrections submitted through the website, reviewed by an admin. */
+export const corrections = pgTable(
+  'corrections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    /** The address the visitor reported (normalized). */
+    ip: text('ip').notNull(),
+    /** Range the accepted correction applies to (set on review; defaults to the single IP). */
+    network: text('network'),
+    countryCode: text('country_code').notNull(),
+    region: text('region'),
+    city: text('city'),
+    email: text('email'),
+    note: text('note'),
+    /** new, accepted or rejected. */
+    status: text('status').notNull().default('new'),
+    /** sha256 of the submitter's IP (abuse handling without storing the address). */
+    submitterHash: text('submitter_hash').notNull(),
+    createdAt: createdAt(),
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+    reviewedBy: uuid('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+  },
+  (t) => [index('corrections_status_idx').on(t.status, t.createdAt)],
+);

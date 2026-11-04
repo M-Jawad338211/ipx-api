@@ -2,6 +2,7 @@
 **/dist
 **/coverage
 **/.turbo
+**/.next
 .git
 .github
 data
@@ -9,7 +10,3 @@ data
 .env.*
 *.log
 .DS_Store
-apps/api/test
-apps/api/bench
-apps/web
-**/*.test.ts

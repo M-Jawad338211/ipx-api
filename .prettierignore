@@ -3,3 +3,5 @@ pnpm-lock.yaml
 packages/shared/openapi.json
 apps/api/src/enrich/countries.json
 PLAN.md
+packages/shared/src/country-names.json
+packages/shared/postman_collection.json

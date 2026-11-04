@@ -56,7 +56,17 @@ export function IpDemo({ apiUrl }: { apiUrl: string }) {
       </form>
       <div className="flex items-center justify-between px-4 pt-3 font-mono text-xs text-fd-muted-foreground">
         <span>GET /v1/json{query.trim() ? `/${query.trim()}` : ''}</span>
-        {state.status === 'done' && <span>{state.ms} ms</span>}
+        {state.status === 'done' && (
+          <span className="flex gap-3">
+            <a
+              href={`/correct${query.trim() ? `?ip=${encodeURIComponent(query.trim())}` : ''}`}
+              className="underline underline-offset-4"
+            >
+              Location wrong?
+            </a>
+            {state.ms} ms
+          </span>
+        )}
       </div>
       <pre className="h-80 overflow-auto px-4 pb-4 pt-2 font-mono text-xs leading-relaxed">
         {state.status === 'loading' && <span className="text-fd-muted-foreground">Loading…</span>}

@@ -29,6 +29,8 @@ export interface Config {
   usageFlushSeconds: number;
   /** Keys of accounts with an unconfirmed email are rejected (true when RESEND_API_KEY is set). */
   emailVerificationRequired: boolean;
+  /** Bearer token for GET /metrics; without it only local processes may scrape. */
+  metricsToken: string | null;
 }
 
 /** <repo>/data, resolved from this file so it works from any working directory. */
@@ -84,5 +86,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     keyCacheSeconds: int(env.KEY_CACHE_SECONDS, 60, 'KEY_CACHE_SECONDS', 0, 3600),
     usageFlushSeconds: int(env.USAGE_FLUSH_SECONDS, 60, 'USAGE_FLUSH_SECONDS', 1, 3600),
     emailVerificationRequired: emailVerificationRequired(env),
+    metricsToken: env.METRICS_TOKEN || null,
   };
 }

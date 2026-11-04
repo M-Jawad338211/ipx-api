@@ -10,6 +10,7 @@ export interface CountryInfo {
   calling_code: string | null;
   currencies: { code: string; name: string | null; symbol: string | null }[];
   languages: { code: string; name: string }[];
+  continent_code: string | null;
   timezones: string[];
 }
 

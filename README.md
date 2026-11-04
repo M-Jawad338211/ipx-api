@@ -14,7 +14,8 @@ address, served from in-memory `.mmdb` databases. See [PLAN.md](PLAN.md) for the
 | `packages/shared` | Response schemas (TypeBox) and the generated `openapi.json`   |
 | `scripts`         | Data updaters: IP databases, Tor/hosting lists, country table |
 | `data`            | Downloaded databases and lists (git-ignored)                  |
-| `docs`            | Response reference, rendered by the docs site later           |
+| `docs`            | Guides and response reference, rendered by the docs site      |
+| `deploy`          | Production compose, Caddy, deploy script, systemd timers      |
 
 ## Quick start
 
@@ -59,6 +60,13 @@ docker compose exec api node scripts/update-security.ts   # refresh lists, hot r
 
 Data files are reloaded without a restart: the update scripts call `POST /internal/reload`
 (accepted only from a local process), and the API also re-checks `data/` every 60 seconds.
+
+## Deployment and operations
+
+[deploy/README.md](deploy/README.md) sets up one server: Cloudflare Tunnel, blue/green
+containers behind Caddy (zero-downtime `deploy.sh`), systemd timers for data updates,
+corrections, freshness alerts and backups. CI (`.github/workflows/ci.yml`) tests, builds the
+images and deploys `main`; `.github/workflows/status.yml` runs the external status page.
 
 ## Data and credits
 

@@ -15,6 +15,7 @@ import { Reader, type Response as MmdbResponse } from 'maxmind';
 import {
   DATA_DIR,
   HttpError,
+  alert,
   fetchWithRetry,
   log,
   notifyReload,
@@ -218,7 +219,11 @@ async function main(): Promise<void> {
   for (const o of outcomes) {
     log(`${o.name}: ${o.ok ? 'ok' : 'FAILED'}${o.changed ? ' (updated)' : ''}`);
   }
-  if (outcomes.some((o) => !o.ok)) process.exitCode = 1;
+  const failed = outcomes.filter((o) => !o.ok).map((o) => o.name);
+  if (failed.length > 0) {
+    await alert(`update-db failed for ${failed.join(', ')}; the previous files are still served`);
+    process.exitCode = 1;
+  }
 }
 
 main().catch((error: unknown) => {

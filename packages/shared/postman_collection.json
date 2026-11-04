@@ -1,0 +1,194 @@
+{
+  "info": {
+    "name": "ipx IP Lookup API",
+    "description": "Geolocation, network, time zone, locale and security data for any IPv4 or IPv6 address. IP data by DB-IP (https://db-ip.com, CC BY 4.0) and IPinfo (https://ipinfo.io, CC BY-SA 4.0).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "apiKey",
+      "value": "ipx_your_key"
+    }
+  ],
+  "item": [
+    {
+      "name": "Lookup",
+      "item": [
+        {
+          "name": "Look up the caller's IP address",
+          "request": {
+            "method": "GET",
+            "description": "Returns the lookup result for the IP address the request comes from. Responses are marked `Cache-Control: no-store` because they depend on the caller.",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "json"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "",
+                  "description": "Comma-separated fields to return, e.g. `ip,location.country,security`. A group name (`location`) returns the whole group; `success` is always included.",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "description": "Language for continent and country names: en (default), de, es, fr, ja, pt-BR, ru, zh-CN, fa, ko. Unknown values fall back to English. City and region names are English only.",
+                  "disabled": true
+                },
+                {
+                  "key": "callback",
+                  "value": "",
+                  "description": "JSONP callback name (letters, digits, `_`, `$`, `.`). The response becomes `callback({...});` and is always sent with HTTP 200, errors included.",
+                  "disabled": true
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Look up an IP address",
+          "request": {
+            "method": "GET",
+            "description": "Returns geolocation, network, time zone, locale and security data for one IPv4 or IPv6 address. Private and reserved addresses return HTTP 200 with `reserved: true`.",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/json/:ip",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "json",
+                ":ip"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "",
+                  "description": "Comma-separated fields to return, e.g. `ip,location.country,security`. A group name (`location`) returns the whole group; `success` is always included.",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "description": "Language for continent and country names: en (default), de, es, fr, ja, pt-BR, ru, zh-CN, fa, ko. Unknown values fall back to English. City and region names are English only.",
+                  "disabled": true
+                },
+                {
+                  "key": "callback",
+                  "value": "",
+                  "description": "JSONP callback name (letters, digits, `_`, `$`, `.`). The response becomes `callback({...});` and is always sent with HTTP 200, errors included.",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "ip",
+                  "value": "",
+                  "description": "IPv4 or IPv6 address to look up."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Look up up to 100 IP addresses",
+          "request": {
+            "method": "POST",
+            "description": "Needs an API key. Each address counts as one lookup against the monthly quota. Invalid addresses do not fail the request; they get an item with `success: false`.",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/batch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "batch"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "",
+                  "description": "Comma-separated fields to return, e.g. `ip,location.country,security`. A group name (`location`) returns the whole group; `success` is always included.",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "description": "Language for continent and country names: en (default), de, es, fr, ja, pt-BR, ru, zh-CN, fa, ko. Unknown values fall back to English. City and region names are English only.",
+                  "disabled": true
+                }
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ips\": [\n    \"8.8.8.8\",\n    \"2001:4860:4860::8888\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Service health and data freshness",
+          "request": {
+            "method": "GET",
+            "description": "HTTP 200 when both IP databases are loaded, 503 (`status: \"degraded\"`) otherwise. Includes the build date and age of each database and list.",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

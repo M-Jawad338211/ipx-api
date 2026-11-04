@@ -1,0 +1,11 @@
+[Unit]
+Description=Dump the Postgres database
+After=docker.service
+Requires=docker.service
+OnFailure=ipx-alert@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/ipx
+ExecStart=/opt/ipx/bin/backup.sh
+TimeoutStartSec=30min

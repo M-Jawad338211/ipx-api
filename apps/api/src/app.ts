@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import swagger from '@fastify/swagger';
 import type { ErrorCode } from '@ipx/shared';
 import Fastify, {
@@ -13,6 +14,7 @@ import { HttpError, errorBody } from './http/errors.ts';
 import { isValidCallback, jsonpBody } from './http/format.ts';
 import { batchRoutes } from './routes/batch.ts';
 import { JSON_TYPE, JS_TYPE, lookupRoutes } from './routes/lookup.ts';
+import { Metrics } from './metrics.ts';
 import { systemRoutes } from './routes/system.ts';
 import { Services } from './services.ts';
 
@@ -24,6 +26,7 @@ declare module 'fastify' {
   interface FastifyInstance {
     store: DataStore;
     services: Services;
+    metrics: Metrics;
   }
 }
 
@@ -83,6 +86,13 @@ export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
     logController: new LogController({ disableRequestLogging: !config.logRequests }),
     routerOptions: { ignoreTrailingSlash: true },
     trustProxy: false,
+    // Reuse a caller's X-Request-Id when it looks sane, otherwise mint one; echoed in responses.
+    genReqId: (req) => {
+      const incoming = req.headers['x-request-id'];
+      return typeof incoming === 'string' && /^[\w.:-]{1,64}$/.test(incoming)
+        ? incoming
+        : randomUUID();
+    },
     return503OnClosing: true,
     bodyLimit: 64 * 1024,
     // Malformed URLs and over-long path segments are rejected by the router before any route
@@ -104,6 +114,53 @@ export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
   const services = new Services(config, app.log);
   app.decorate('services', services);
   app.addHook('onClose', async () => services.close());
+
+  const metrics = new Metrics();
+  app.decorate('metrics', metrics);
+  services.metrics = metrics;
+  if (services.usage) services.usage.onFlushed = (count) => metrics.usageFlushed.inc({}, count);
+  metrics.addGauge({
+    name: 'ipx_data_age_seconds',
+    help: 'Age of each loaded database or list.',
+    values: () => {
+      const h = store.health();
+      const age = (iso: string | null) => (iso ? (Date.now() - Date.parse(iso)) / 1000 : null);
+      return [
+        { labels: { source: 'city' }, value: age(h.databases.city.build_date) },
+        { labels: { source: 'asn' }, value: age(h.databases.asn.build_date) },
+        { labels: { source: 'tor' }, value: age(h.lists.tor.updated_at) },
+        { labels: { source: 'hosting' }, value: age(h.lists.hosting.updated_at) },
+      ];
+    },
+  });
+  metrics.addGauge({
+    name: 'ipx_data_entries',
+    help: 'Entries in each loaded list.',
+    values: () => {
+      const { lists } = store.health();
+      return Object.entries(lists).map(([source, l]) => ({ labels: { source }, value: l.entries }));
+    },
+  });
+  metrics.addGauge({
+    name: 'ipx_process_resident_memory_bytes',
+    help: 'Resident memory of the API process.',
+    values: () => [{ value: process.memoryUsage.rss() }],
+  });
+  metrics.addGauge({
+    name: 'ipx_process_uptime_seconds',
+    help: 'Seconds since the API process started.',
+    values: () => [{ value: process.uptime() }],
+  });
+
+  app.addHook('onSend', async (request, reply) => {
+    reply.header('x-request-id', request.id);
+  });
+  app.addHook('onResponse', async (request, reply) => {
+    const route = request.routeOptions.url ?? 'unmatched';
+    if (route === '/metrics') return;
+    metrics.requests.inc({ method: request.method, route, status: String(reply.statusCode) });
+    metrics.duration.observe({ route }, reply.elapsedTime / 1000);
+  });
 
   await app.register(swagger, {
     openapi: {
@@ -174,7 +231,7 @@ export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
   await app.register(lookupRoutes, { ...routeOptions, prefix: '/v1', documented: true });
   await app.register(lookupRoutes, { ...routeOptions, documented: false }); // ip-api-style aliases
   await app.register(batchRoutes, { ...routeOptions, prefix: '/v1' });
-  await app.register(systemRoutes, { store, services });
+  await app.register(systemRoutes, { store, services, metrics, metricsToken: config.metricsToken });
 
   return app;
 }

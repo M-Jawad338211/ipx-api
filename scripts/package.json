@@ -8,6 +8,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@ipx/db": "workspace:*",
     "maxmind": "^5.0.8"
   }
 }

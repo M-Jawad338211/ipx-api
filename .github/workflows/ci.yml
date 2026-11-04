@@ -1,0 +1,137 @@
+# Test on every push and pull request; on main also build the images and deploy.
+#
+# Secrets:   IPINFO_TOKEN (data download), DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER
+# Variables: DEPLOY_ENABLED=true (turns on the deploy job), NEXT_PUBLIC_API_URL,
+#            NEXT_PUBLIC_STATUS_URL, NEXT_PUBLIC_TURNSTILE_SITE_KEY (baked into the website build)
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: ipx
+          POSTGRES_PASSWORD: ipx
+          POSTGRES_DB: ipx
+        ports: ['5433:5432']
+        options: >-
+          --health-cmd "pg_isready -U ipx -d ipx" --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:8-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Month for the data cache
+        id: month
+        run: echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: data
+          key: data-${{ steps.month.outputs.month }}-${{ github.run_id }}
+          restore-keys: |
+            data-${{ steps.month.outputs.month }}-
+            data-
+      - name: Download IP databases and lists
+        env:
+          IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
+        run: |
+          pnpm update-db
+          pnpm update-security
+
+      - run: pnpm check
+      - name: OpenAPI and Postman are current
+        run: |
+          node apps/api/src/export-openapi.ts --check
+          node scripts/postman.ts --check
+      - name: Validate the OpenAPI document
+        run: npx --yes @redocly/cli@2.73.0 lint packages/shared/openapi.json
+      - name: Formatting
+        run: pnpm format:check
+
+  images:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Registry name
+        id: registry
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.registry.outputs.name }}/ipx-api:${{ github.sha }}
+            ${{ steps.registry.outputs.name }}/ipx-api:latest
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,scope=api,mode=max
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_STATUS_URL=${{ vars.NEXT_PUBLIC_STATUS_URL }}
+            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ vars.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+          tags: |
+            ${{ steps.registry.outputs.name }}/ipx-web:${{ github.sha }}
+            ${{ steps.registry.outputs.name }}/ipx-web:latest
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,scope=web,mode=max
+
+  deploy:
+    if: vars.DEPLOY_ENABLED == 'true'
+    needs: images
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          TAG: ${{ needs.images.outputs.tag }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh -i ~/.ssh/deploy_key "$USER@$HOST" "cd /opt/ipx && ./deploy.sh $TAG"

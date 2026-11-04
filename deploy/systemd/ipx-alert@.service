@@ -1,0 +1,7 @@
+[Unit]
+Description=Alert: %i failed
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/ipx
+ExecStart=/opt/ipx/bin/alert.sh "systemd unit %i failed (journalctl -u %i)"

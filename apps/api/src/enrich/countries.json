@@ -11,7 +11,7 @@
    "license": "public domain"
   }
  ],
- "generated_at": "2026-11-03",
+ "generated_at": "2026-11-04",
  "countries": {
   "AD": {
    "name": "Andorra",
@@ -30,6 +30,7 @@
      "name": "Catalan"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Andorra"
    ]
@@ -51,6 +52,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Dubai"
    ]
@@ -80,6 +82,7 @@
      "name": "Turkmen"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Kabul"
    ]
@@ -101,6 +104,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Antigua"
    ]
@@ -122,6 +126,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Anguilla"
    ]
@@ -143,6 +148,7 @@
      "name": "Albanian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Tirane"
    ]
@@ -164,6 +170,7 @@
      "name": "Armenian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Yerevan"
    ]
@@ -185,6 +192,7 @@
      "name": "Portuguese"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Luanda"
    ]
@@ -195,6 +203,7 @@
    "calling_code": null,
    "currencies": [],
    "languages": [],
+   "continent_code": "AN",
    "timezones": [
     "Antarctica/McMurdo",
     "Antarctica/Casey",
@@ -229,6 +238,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Argentina/Buenos_Aires",
     "America/Argentina/Cordoba",
@@ -265,6 +275,7 @@
      "name": "Samoan"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Pago_Pago"
    ]
@@ -286,6 +297,7 @@
      "name": "Austro-Bavarian German"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Vienna"
    ]
@@ -307,6 +319,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Australia/Lord_Howe",
     "Antarctica/Macquarie",
@@ -343,6 +356,7 @@
      "name": "Papiamento"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Aruba"
    ]
@@ -364,6 +378,7 @@
      "name": "Swedish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Mariehamn"
    ]
@@ -389,6 +404,7 @@
      "name": "Russian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Baku"
    ]
@@ -418,6 +434,7 @@
      "name": "Serbian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Sarajevo"
    ]
@@ -439,6 +456,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Barbados"
    ]
@@ -460,6 +478,7 @@
      "name": "Bengali"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Dhaka"
    ]
@@ -489,6 +508,7 @@
      "name": "Dutch"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Brussels"
    ]
@@ -510,6 +530,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Ouagadougou"
    ]
@@ -531,6 +552,7 @@
      "name": "Bulgarian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Sofia"
    ]
@@ -552,6 +574,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Bahrain"
    ]
@@ -577,6 +600,7 @@
      "name": "Kirundi"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Bujumbura"
    ]
@@ -598,6 +622,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Porto-Novo"
    ]
@@ -619,6 +644,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/St_Barthelemy"
    ]
@@ -640,6 +666,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "Atlantic/Bermuda"
    ]
@@ -666,6 +693,7 @@
      "name": "Malay"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Brunei"
    ]
@@ -699,6 +727,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/La_Paz"
    ]
@@ -728,6 +757,7 @@
      "name": "Papiamento"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Kralendijk"
    ]
@@ -749,6 +779,7 @@
      "name": "Portuguese"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Noronha",
     "America/Belem",
@@ -790,6 +821,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Nassau"
    ]
@@ -816,6 +848,7 @@
      "name": "Dzongkha"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Thimphu"
    ]
@@ -831,6 +864,7 @@
      "name": "Norwegian"
     }
    ],
+   "continent_code": "AN",
    "timezones": []
   },
   "BW": {
@@ -854,6 +888,7 @@
      "name": "Tswana"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Gaborone"
    ]
@@ -879,6 +914,7 @@
      "name": "Russian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Minsk"
    ]
@@ -908,6 +944,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Belize"
    ]
@@ -933,6 +970,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/St_Johns",
     "America/Halifax",
@@ -976,6 +1014,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Indian/Cocos"
    ]
@@ -1013,6 +1052,7 @@
      "name": "Swahili"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Kinshasa",
     "Africa/Lubumbashi"
@@ -1039,6 +1079,7 @@
      "name": "Sango"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Bangui"
    ]
@@ -1068,6 +1109,7 @@
      "name": "Lingala"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Brazzaville"
    ]
@@ -1101,6 +1143,7 @@
      "name": "Romansh"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Zurich"
    ]
@@ -1122,6 +1165,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Abidjan"
    ]
@@ -1152,6 +1196,7 @@
      "name": "Cook Islands Māori"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Rarotonga"
    ]
@@ -1173,6 +1218,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Santiago",
     "America/Coyhaique",
@@ -1201,6 +1247,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Douala"
    ]
@@ -1222,6 +1269,7 @@
      "name": "Chinese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Shanghai",
     "Asia/Urumqi"
@@ -1244,6 +1292,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Bogota"
    ]
@@ -1265,6 +1314,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Costa_Rica"
    ]
@@ -1286,6 +1336,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Havana"
    ]
@@ -1307,6 +1358,7 @@
      "name": "Portuguese"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Atlantic/Cape_Verde"
    ]
@@ -1336,6 +1388,7 @@
      "name": "Papiamento"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Curacao"
    ]
@@ -1357,6 +1410,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Indian/Christmas"
    ]
@@ -1382,6 +1436,7 @@
      "name": "Turkish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Asia/Nicosia",
     "Asia/Famagusta"
@@ -1408,6 +1463,7 @@
      "name": "Slovak"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Prague"
    ]
@@ -1429,6 +1485,7 @@
      "name": "German"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Berlin",
     "Europe/Busingen"
@@ -1455,6 +1512,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Djibouti"
    ]
@@ -1476,6 +1534,7 @@
      "name": "Danish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Copenhagen"
    ]
@@ -1497,6 +1556,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Dominica"
    ]
@@ -1518,6 +1578,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Santo_Domingo"
    ]
@@ -1539,6 +1600,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Algiers"
    ]
@@ -1560,6 +1622,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Guayaquil",
     "Pacific/Galapagos"
@@ -1582,6 +1645,7 @@
      "name": "Estonian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Tallinn"
    ]
@@ -1603,6 +1667,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Cairo"
    ]
@@ -1642,6 +1707,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/El_Aaiun"
    ]
@@ -1671,6 +1737,7 @@
      "name": "Tigrinya"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Asmara"
    ]
@@ -1692,6 +1759,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Madrid",
     "Africa/Ceuta",
@@ -1715,6 +1783,7 @@
      "name": "Amharic"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Addis_Ababa"
    ]
@@ -1740,6 +1809,7 @@
      "name": "Swedish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Helsinki"
    ]
@@ -1769,6 +1839,7 @@
      "name": "Fiji Hindi"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Fiji"
    ]
@@ -1790,6 +1861,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "Atlantic/Stanley"
    ]
@@ -1805,6 +1877,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Chuuk",
     "Pacific/Pohnpei",
@@ -1837,6 +1910,7 @@
      "name": "Faroese"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Atlantic/Faroe"
    ]
@@ -1858,6 +1932,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Paris"
    ]
@@ -1879,6 +1954,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Libreville"
    ]
@@ -1900,6 +1976,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/London"
    ]
@@ -1921,6 +1998,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Grenada"
    ]
@@ -1942,6 +2020,7 @@
      "name": "Georgian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Tbilisi"
    ]
@@ -1963,6 +2042,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Cayenne"
    ]
@@ -1997,6 +2077,7 @@
      "name": "Guernésiais"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Guernsey"
    ]
@@ -2018,6 +2099,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Accra"
    ]
@@ -2039,6 +2121,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Gibraltar"
    ]
@@ -2060,6 +2143,7 @@
      "name": "Greenlandic"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Nuuk",
     "America/Danmarkshavn",
@@ -2084,6 +2168,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Banjul"
    ]
@@ -2105,6 +2190,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Conakry"
    ]
@@ -2126,6 +2212,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Guadeloupe"
    ]
@@ -2155,6 +2242,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Malabo"
    ]
@@ -2176,6 +2264,7 @@
      "name": "Greek"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Athens"
    ]
@@ -2197,6 +2286,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AN",
    "timezones": [
     "Atlantic/South_Georgia"
    ]
@@ -2218,6 +2308,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Guatemala"
    ]
@@ -2247,6 +2338,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Guam"
    ]
@@ -2272,6 +2364,7 @@
      "name": "Upper Guinea Creole"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Bissau"
    ]
@@ -2293,6 +2386,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Guyana"
    ]
@@ -2318,6 +2412,7 @@
      "name": "Chinese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Hong_Kong"
    ]
@@ -2333,6 +2428,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AN",
    "timezones": []
   },
   "HN": {
@@ -2352,6 +2448,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Tegucigalpa"
    ]
@@ -2373,6 +2470,7 @@
      "name": "Croatian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Zagreb"
    ]
@@ -2398,6 +2496,7 @@
      "name": "Haitian Creole"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Port-au-Prince"
    ]
@@ -2419,6 +2518,7 @@
      "name": "Hungarian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Budapest"
    ]
@@ -2440,6 +2540,7 @@
      "name": "Indonesian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Jakarta",
     "Asia/Pontianak",
@@ -2468,6 +2569,7 @@
      "name": "Irish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Dublin"
    ]
@@ -2493,6 +2595,7 @@
      "name": "Hebrew"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Jerusalem"
    ]
@@ -2523,6 +2626,7 @@
      "name": "Manx"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Isle_of_Man"
    ]
@@ -2552,6 +2656,7 @@
      "name": "Tamil"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Kolkata"
    ]
@@ -2573,6 +2678,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Indian/Chagos"
    ]
@@ -2602,6 +2708,7 @@
      "name": "Sorani"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Baghdad"
    ]
@@ -2623,6 +2730,7 @@
      "name": "Persian (Farsi)"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Tehran"
    ]
@@ -2644,6 +2752,7 @@
      "name": "Icelandic"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Atlantic/Reykjavik"
    ]
@@ -2665,6 +2774,7 @@
      "name": "Italian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Rome"
    ]
@@ -2699,6 +2809,7 @@
      "name": "Jèrriais"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Jersey"
    ]
@@ -2724,6 +2835,7 @@
      "name": "Jamaican Patois"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Jamaica"
    ]
@@ -2745,6 +2857,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Amman"
    ]
@@ -2766,6 +2879,7 @@
      "name": "Japanese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Tokyo"
    ]
@@ -2791,6 +2905,7 @@
      "name": "Swahili"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Nairobi"
    ]
@@ -2816,6 +2931,7 @@
      "name": "Russian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Bishkek"
    ]
@@ -2842,6 +2958,7 @@
      "name": "Khmer"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Phnom_Penh"
    ]
@@ -2872,6 +2989,7 @@
      "name": "Gilbertese"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Tarawa",
     "Pacific/Kanton",
@@ -2903,6 +3021,7 @@
      "name": "Comorian"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Indian/Comoro"
    ]
@@ -2924,6 +3043,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/St_Kitts"
    ]
@@ -2945,6 +3065,7 @@
      "name": "Korean"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Pyongyang"
    ]
@@ -2966,6 +3087,7 @@
      "name": "Korean"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Seoul"
    ]
@@ -2987,6 +3109,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Kuwait"
    ]
@@ -3008,6 +3131,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Cayman"
    ]
@@ -3033,6 +3157,7 @@
      "name": "Russian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Almaty",
     "Asia/Qyzylorda",
@@ -3060,6 +3185,7 @@
      "name": "Lao"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Vientiane"
    ]
@@ -3085,6 +3211,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Beirut"
    ]
@@ -3106,6 +3233,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/St_Lucia"
    ]
@@ -3127,6 +3255,7 @@
      "name": "German"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Vaduz"
    ]
@@ -3152,6 +3281,7 @@
      "name": "Tamil"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Colombo"
    ]
@@ -3173,6 +3303,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Monrovia"
    ]
@@ -3203,6 +3334,7 @@
      "name": "Sotho"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Maseru"
    ]
@@ -3224,6 +3356,7 @@
      "name": "Lithuanian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Vilnius"
    ]
@@ -3253,6 +3386,7 @@
      "name": "Luxembourgish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Luxembourg"
    ]
@@ -3274,6 +3408,7 @@
      "name": "Latvian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Riga"
    ]
@@ -3295,6 +3430,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Tripoli"
    ]
@@ -3320,6 +3456,7 @@
      "name": "Berber"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Casablanca"
    ]
@@ -3341,6 +3478,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Monaco"
    ]
@@ -3362,6 +3500,7 @@
      "name": "Moldavian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Chisinau"
    ]
@@ -3383,6 +3522,7 @@
      "name": "Montenegrin"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Podgorica"
    ]
@@ -3404,6 +3544,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Marigot"
    ]
@@ -3429,6 +3570,7 @@
      "name": "Malagasy"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Indian/Antananarivo"
    ]
@@ -3454,6 +3596,7 @@
      "name": "Marshallese"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Majuro",
     "Pacific/Kwajalein"
@@ -3476,6 +3619,7 @@
      "name": "Macedonian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Skopje"
    ]
@@ -3497,6 +3641,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Bamako"
    ]
@@ -3518,6 +3663,7 @@
      "name": "Burmese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Yangon"
    ]
@@ -3539,6 +3685,7 @@
      "name": "Mongolian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Ulaanbaatar",
     "Asia/Hovd"
@@ -3565,6 +3712,7 @@
      "name": "Chinese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Macau"
    ]
@@ -3594,6 +3742,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Saipan"
    ]
@@ -3615,6 +3764,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Martinique"
    ]
@@ -3636,6 +3786,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Nouakchott"
    ]
@@ -3657,6 +3808,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Montserrat"
    ]
@@ -3682,6 +3834,7 @@
      "name": "Maltese"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Malta"
    ]
@@ -3711,6 +3864,7 @@
      "name": "Mauritian Creole"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Indian/Mauritius"
    ]
@@ -3732,6 +3886,7 @@
      "name": "Maldivian"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Indian/Maldives"
    ]
@@ -3757,6 +3912,7 @@
      "name": "Chewa"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Blantyre"
    ]
@@ -3778,6 +3934,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Mexico_City",
     "America/Cancun",
@@ -3814,6 +3971,7 @@
      "name": "Malay"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Kuala_Lumpur",
     "Asia/Kuching"
@@ -3836,6 +3994,7 @@
      "name": "Portuguese"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Maputo"
    ]
@@ -3894,6 +4053,7 @@
      "name": "Tswana"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Windhoek"
    ]
@@ -3915,6 +4075,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Noumea"
    ]
@@ -3936,6 +4097,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Niamey"
    ]
@@ -3961,6 +4123,7 @@
      "name": "Norfuk"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Norfolk"
    ]
@@ -3982,6 +4145,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Lagos"
    ]
@@ -4003,6 +4167,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Managua"
    ]
@@ -4024,6 +4189,7 @@
      "name": "Dutch"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Amsterdam"
    ]
@@ -4053,6 +4219,7 @@
      "name": "Sami"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Oslo"
    ]
@@ -4074,6 +4241,7 @@
      "name": "Nepali"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Kathmandu"
    ]
@@ -4099,6 +4267,7 @@
      "name": "Nauru"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Nauru"
    ]
@@ -4124,6 +4293,7 @@
      "name": "Niuean"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Niue"
    ]
@@ -4153,6 +4323,7 @@
      "name": "New Zealand Sign Language"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Auckland",
     "Pacific/Chatham"
@@ -4175,6 +4346,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Muscat"
    ]
@@ -4201,6 +4373,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Panama"
    ]
@@ -4230,6 +4403,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Lima"
    ]
@@ -4251,6 +4425,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Tahiti",
     "Pacific/Marquesas",
@@ -4282,6 +4457,7 @@
      "name": "Tok Pisin"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Port_Moresby",
     "Pacific/Bougainville"
@@ -4308,6 +4484,7 @@
      "name": "Filipino"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Manila"
    ]
@@ -4333,6 +4510,7 @@
      "name": "Urdu"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Karachi"
    ]
@@ -4354,6 +4532,7 @@
      "name": "Polish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Warsaw"
    ]
@@ -4375,6 +4554,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Miquelon"
    ]
@@ -4396,6 +4576,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Pitcairn"
    ]
@@ -4421,6 +4602,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Puerto_Rico"
    ]
@@ -4452,6 +4634,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Gaza",
     "Asia/Hebron"
@@ -4474,6 +4657,7 @@
      "name": "Portuguese"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Lisbon",
     "Atlantic/Madeira",
@@ -4501,6 +4685,7 @@
      "name": "Palauan"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Palau"
    ]
@@ -4526,6 +4711,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Asuncion"
    ]
@@ -4547,6 +4733,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Qatar"
    ]
@@ -4568,6 +4755,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Indian/Reunion"
    ]
@@ -4589,6 +4777,7 @@
      "name": "Romanian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Bucharest"
    ]
@@ -4610,6 +4799,7 @@
      "name": "Serbian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Belgrade"
    ]
@@ -4631,6 +4821,7 @@
      "name": "Russian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Kaliningrad",
     "Europe/Moscow",
@@ -4685,6 +4876,7 @@
      "name": "Kinyarwanda"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Kigali"
    ]
@@ -4706,6 +4898,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Riyadh"
    ]
@@ -4727,6 +4920,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Guadalcanal"
    ]
@@ -4756,6 +4950,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Indian/Mahe"
    ]
@@ -4781,6 +4976,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Khartoum"
    ]
@@ -4802,6 +4998,7 @@
      "name": "Swedish"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Stockholm"
    ]
@@ -4835,6 +5032,7 @@
      "name": "Chinese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Singapore"
    ]
@@ -4861,6 +5059,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Atlantic/St_Helena"
    ]
@@ -4882,6 +5081,7 @@
      "name": "Slovene"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Ljubljana"
    ]
@@ -4903,6 +5103,7 @@
      "name": "Norwegian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Arctic/Longyearbyen"
    ]
@@ -4924,6 +5125,7 @@
      "name": "Slovak"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Bratislava"
    ]
@@ -4945,6 +5147,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Freetown"
    ]
@@ -4966,6 +5169,7 @@
      "name": "Italian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/San_Marino"
    ]
@@ -4987,6 +5191,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Dakar"
    ]
@@ -5012,6 +5217,7 @@
      "name": "Somali"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Mogadishu"
    ]
@@ -5033,6 +5239,7 @@
      "name": "Dutch"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Paramaribo"
    ]
@@ -5054,6 +5261,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Juba"
    ]
@@ -5075,6 +5283,7 @@
      "name": "Portuguese"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Sao_Tome"
    ]
@@ -5096,6 +5305,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/El_Salvador"
    ]
@@ -5125,6 +5335,7 @@
      "name": "Dutch"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Lower_Princes"
    ]
@@ -5146,6 +5357,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Damascus"
    ]
@@ -5176,6 +5388,7 @@
      "name": "Swazi"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Mbabane"
    ]
@@ -5197,6 +5410,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Grand_Turk"
    ]
@@ -5222,6 +5436,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Ndjamena"
    ]
@@ -5243,6 +5458,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AN",
    "timezones": [
     "Indian/Kerguelen"
    ]
@@ -5264,6 +5480,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Lome"
    ]
@@ -5285,6 +5502,7 @@
      "name": "Thai"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Bangkok"
    ]
@@ -5310,6 +5528,7 @@
      "name": "Tajik"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Dushanbe"
    ]
@@ -5339,6 +5558,7 @@
      "name": "Tokelauan"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Fakaofo"
    ]
@@ -5364,6 +5584,7 @@
      "name": "Tetum"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Dili"
    ]
@@ -5389,6 +5610,7 @@
      "name": "Turkmen"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Ashgabat"
    ]
@@ -5410,6 +5632,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Tunis"
    ]
@@ -5435,6 +5658,7 @@
      "name": "Tongan"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Tongatapu"
    ]
@@ -5456,6 +5680,7 @@
      "name": "Turkish"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Europe/Istanbul"
    ]
@@ -5477,6 +5702,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Port_of_Spain"
    ]
@@ -5507,6 +5733,7 @@
      "name": "Tuvaluan"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Funafuti"
    ]
@@ -5528,6 +5755,7 @@
      "name": "Chinese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Taipei"
    ]
@@ -5553,6 +5781,7 @@
      "name": "Swahili"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Dar_es_Salaam"
    ]
@@ -5574,6 +5803,7 @@
      "name": "Ukrainian"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Simferopol",
     "Europe/Kyiv"
@@ -5600,6 +5830,7 @@
      "name": "Swahili"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Kampala"
    ]
@@ -5621,6 +5852,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "Pacific/Midway",
     "Pacific/Wake"
@@ -5643,6 +5875,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/New_York",
     "America/Detroit",
@@ -5692,6 +5925,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Montevideo"
    ]
@@ -5717,6 +5951,7 @@
      "name": "Uzbek"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Samarkand",
     "Asia/Tashkent"
@@ -5743,6 +5978,7 @@
      "name": "Latin"
     }
    ],
+   "continent_code": "EU",
    "timezones": [
     "Europe/Vatican"
    ]
@@ -5764,6 +6000,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/St_Vincent"
    ]
@@ -5785,6 +6022,7 @@
      "name": "Spanish"
     }
    ],
+   "continent_code": "SA",
    "timezones": [
     "America/Caracas"
    ]
@@ -5806,6 +6044,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/Tortola"
    ]
@@ -5827,6 +6066,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "NA",
    "timezones": [
     "America/St_Thomas"
    ]
@@ -5848,6 +6088,7 @@
      "name": "Vietnamese"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Ho_Chi_Minh"
    ]
@@ -5877,6 +6118,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Efate"
    ]
@@ -5898,6 +6140,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Wallis"
    ]
@@ -5923,6 +6166,7 @@
      "name": "Samoan"
     }
    ],
+   "continent_code": "OC",
    "timezones": [
     "Pacific/Apia"
    ]
@@ -5948,6 +6192,7 @@
      "name": "Serbian"
     }
    ],
+   "continent_code": "EU",
    "timezones": []
   },
   "YE": {
@@ -5967,6 +6212,7 @@
      "name": "Arabic"
     }
    ],
+   "continent_code": "AS",
    "timezones": [
     "Asia/Aden"
    ]
@@ -5988,6 +6234,7 @@
      "name": "French"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Indian/Mayotte"
    ]
@@ -6049,6 +6296,7 @@
      "name": "Zulu"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Johannesburg"
    ]
@@ -6070,6 +6318,7 @@
      "name": "English"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Lusaka"
    ]
@@ -6187,6 +6436,7 @@
      "name": "Zimbabwean Sign Language"
     }
    ],
+   "continent_code": "AF",
    "timezones": [
     "Africa/Harare"
    ]

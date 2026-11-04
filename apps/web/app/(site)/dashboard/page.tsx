@@ -6,6 +6,7 @@ import { KeyPanel } from '@/components/key-panel';
 import { Alert, Badge, Button, Card, LinkButton } from '@/components/ui';
 import { UsageChart } from '@/components/usage-chart';
 import { canUseFeatures, currentPlan, dailyUsage, listKeys, monthUsage } from '@/server/accounts';
+import { countNewCorrections, isAdmin } from '@/server/corrections';
 import { logOutAction } from '@/server/actions';
 import { paddleConfig } from '@/server/billing';
 import { getDb } from '@/server/db';
@@ -26,6 +27,8 @@ export default async function DashboardPage(props: PageProps<'/dashboard'>) {
     monthUsage(db, user.id),
   ]);
   const paddle = paddleConfig();
+  const admin = isAdmin(user.email);
+  const newCorrections = admin ? await countNewCorrections(db) : 0;
   const share = Math.min(100, (used / plan.plan.monthlyQuota) * 100);
 
   return (
@@ -35,11 +38,18 @@ export default async function DashboardPage(props: PageProps<'/dashboard'>) {
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
           <p className="text-sm text-fd-muted-foreground">{user.email}</p>
         </div>
-        <form action={logOutAction}>
-          <Button type="submit" variant="ghost">
-            <LogOut className="size-4" /> Log out
-          </Button>
-        </form>
+        <div className="flex items-center gap-2">
+          {admin && (
+            <LinkButton href="/dashboard/corrections" variant="secondary">
+              Corrections{newCorrections > 0 ? ` (${newCorrections} new)` : ''}
+            </LinkButton>
+          )}
+          <form action={logOutAction}>
+            <Button type="submit" variant="ghost">
+              <LogOut className="size-4" /> Log out
+            </Button>
+          </form>
+        </div>
       </div>
 
       {search.verified === '1' && (

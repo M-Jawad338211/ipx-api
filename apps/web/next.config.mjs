@@ -17,6 +17,9 @@ const config = {
   transpilePackages: ['@ipx/db', '@ipx/shared'],
   serverExternalPackages: ['ioredis', 'postgres'],
   turbopack: { root },
+  // Self-contained server for the Docker image (traces workspace packages from the repo root).
+  output: 'standalone',
+  outputFileTracingRoot: root,
   poweredByHeader: false,
 };
 

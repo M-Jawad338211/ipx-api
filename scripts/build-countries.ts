@@ -12,6 +12,8 @@ import { REPO_ROOT, fetchJson, fetchText, log, warn, writeFileAtomic } from './l
 const MLEDOZE_URL = 'https://raw.githubusercontent.com/mledoze/countries/master/countries.json';
 const ZONE_TAB_URL = 'https://data.iana.org/time-zones/tzdb/zone.tab';
 const OUTPUT = path.join(REPO_ROOT, 'apps/api/src/enrich/countries.json');
+/** Code -> English name, for forms in the website. */
+const NAMES_OUTPUT = path.join(REPO_ROOT, 'packages/shared/src/country-names.json');
 
 interface MledozeCountry {
   cca2: string;
@@ -20,6 +22,28 @@ interface MledozeCountry {
   idd?: { root?: string; suffixes?: string[] };
   currencies?: Record<string, { name?: string; symbol?: string }>;
   languages?: Record<string, string>;
+  region?: string;
+  subregion?: string;
+}
+
+/** mledoze region/subregion -> two-letter continent code (as used by IPinfo and DB-IP). */
+function continentCode(c: MledozeCountry): string | null {
+  switch (c.region) {
+    case 'Africa':
+      return 'AF';
+    case 'Antarctic':
+      return 'AN';
+    case 'Asia':
+      return 'AS';
+    case 'Europe':
+      return 'EU';
+    case 'Oceania':
+      return 'OC';
+    case 'Americas':
+      return c.subregion === 'South America' ? 'SA' : 'NA';
+    default:
+      return null;
+  }
 }
 
 interface CountryInfo {
@@ -28,6 +52,7 @@ interface CountryInfo {
   calling_code: string | null;
   currencies: { code: string; name: string | null; symbol: string | null }[];
   languages: { code: string; name: string }[];
+  continent_code: string | null;
   timezones: string[];
 }
 
@@ -88,6 +113,7 @@ async function main(): Promise<void> {
         symbol: cur.symbol ?? null,
       })),
       languages: Object.entries(c.languages ?? {}).map(([code, name]) => ({ code, name })),
+      continent_code: continentCode(c),
       timezones: zones.get(c.cca2) ?? [],
     };
   }
@@ -101,6 +127,8 @@ async function main(): Promise<void> {
     countries,
   };
   await writeFileAtomic(OUTPUT, `${JSON.stringify(output, null, 1)}\n`);
+  const names = Object.fromEntries(Object.entries(countries).map(([code, c]) => [code, c.name]));
+  await writeFileAtomic(NAMES_OUTPUT, `${JSON.stringify(names, null, 1)}\n`);
   const count = Object.keys(countries).length;
   const singleZone = Object.values(countries).filter((c) => c.timezones.length === 1).length;
   log(

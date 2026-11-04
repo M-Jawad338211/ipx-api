@@ -18,6 +18,8 @@ export class UsageFlusher {
   readonly #log: StoreLogger;
   #timer: NodeJS.Timeout | null = null;
   #running: Promise<number> | null = null;
+  /** Called with the number of lookups written by each successful flush. */
+  onFlushed: ((count: number) => void) | null = null;
 
   constructor(redis: Redis, db: Database, log: StoreLogger) {
     this.#redis = redis;
@@ -77,6 +79,7 @@ export class UsageFlusher {
       const entries = await this.#redis.hgetall(snapshot);
       const written = await this.#write(entries);
       await this.#redis.del(snapshot);
+      if (written > 0) this.onFlushed?.(written);
       return written;
     } catch (error) {
       this.#log.error({ err: error }, 'usage flush failed; counts kept for the next run');

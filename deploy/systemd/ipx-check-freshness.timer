@@ -1,0 +1,10 @@
+[Unit]
+Description=Schedule: Alert on stale data or unhealthy services
+
+[Timer]
+OnCalendar=*-*-* *:45:00 UTC
+RandomizedDelaySec=1min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

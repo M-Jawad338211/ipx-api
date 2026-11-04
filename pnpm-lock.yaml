@@ -167,6 +167,9 @@ importers:
 
   scripts:
     dependencies:
+      '@ipx/db':
+        specifier: workspace:*
+        version: link:../packages/db
       maxmind:
         specifier: ^5.0.8
         version: 5.0.8

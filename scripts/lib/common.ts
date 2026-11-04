@@ -167,3 +167,25 @@ export function isIpv6(value: string): boolean {
   // Lightweight structural check; the API does the strict parsing.
   return /^[0-9a-fA-F:.]+$/.test(value) && value.includes(':') && value.split('::').length <= 2;
 }
+
+/**
+ * Posts a message to ALERT_WEBHOOK_URL (Slack or Discord incoming webhook: both `text` and
+ * `content` are sent). Without the variable the alert is only printed. Never throws.
+ */
+export async function alert(message: string): Promise<void> {
+  const text = `[ipx ${process.env.IPX_SERVER_NAME || process.env.HOSTNAME || 'server'}] ${message}`;
+  console.error(`[${new Date().toISOString()}] ALERT ${text}`);
+  const url = process.env.ALERT_WEBHOOK_URL;
+  if (!url) return;
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text, content: text }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) warn(`alert webhook answered ${res.status}`);
+  } catch (error) {
+    warn(`alert webhook failed: ${(error as Error).message}`);
+  }
+}

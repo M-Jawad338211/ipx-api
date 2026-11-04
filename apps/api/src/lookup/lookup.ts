@@ -1,5 +1,5 @@
 import type { IpLookup, Locale, Location, Network, Security } from '@ipx/shared';
-import type { DataStore } from '../data/store.ts';
+import type { DataStore, LocationOverride } from '../data/store.ts';
 import { getCountry, isEuMember } from '../enrich/countries.ts';
 import { EMPTY_TIMEZONE, timezoneAt, timezoneInfo } from '../enrich/timezone.ts';
 import { isReserved, type ParsedIp } from '../ip.ts';
@@ -79,6 +79,58 @@ function localeFor(countryCode: string | null): Locale {
   };
 }
 
+const CONTINENT_NAMES: Readonly<Record<string, string>> = {
+  AF: 'Africa',
+  AN: 'Antarctica',
+  AS: 'Asia',
+  EU: 'Europe',
+  NA: 'North America',
+  OC: 'Oceania',
+  SA: 'South America',
+};
+
+function localizedCountry(code: string, lang: string): string | null {
+  if (lang !== 'en') {
+    try {
+      const name = new Intl.DisplayNames([lang], { type: 'region' }).of(code);
+      if (name && name !== code) return name;
+    } catch {
+      // unknown locale: fall through to English
+    }
+  }
+  return getCountry(code)?.name ?? null;
+}
+
+/**
+ * Applies an accepted correction (data/location-overrides.json). Coordinates are kept only when
+ * the correction names the same country and city the database already had; otherwise they are
+ * dropped (the time zone then falls back to the country's single zone, if it has one).
+ */
+function applyOverride(detected: Location, override: LocationOverride, lang: string): Location {
+  const sameCountry = detected.country_code === override.country_code;
+  const sameCity =
+    sameCountry && (detected.city ?? '').toLowerCase() === (override.city ?? '').toLowerCase();
+  const continentCode = sameCountry
+    ? detected.continent_code
+    : (getCountry(override.country_code)?.continent_code ?? null);
+  return {
+    continent: sameCountry
+      ? detected.continent
+      : continentCode
+        ? (CONTINENT_NAMES[continentCode] ?? null)
+        : null,
+    continent_code: continentCode,
+    country: sameCountry ? detected.country : localizedCountry(override.country_code, lang),
+    country_code: override.country_code,
+    is_eu: isEuMember(override.country_code),
+    region: override.region,
+    city: override.city,
+    postal: null,
+    latitude: sameCity ? detected.latitude : null,
+    longitude: sameCity ? detected.longitude : null,
+  };
+}
+
 /** Lookup result for a private, loopback or otherwise reserved address. */
 export function reservedResult(ip: ParsedIp): IpLookup {
   return {
@@ -119,7 +171,7 @@ export function lookupIp(
   const continentCode = asn?.continent_code || city?.continent?.code || null;
   const sameContinent = city?.continent?.code === continentCode;
 
-  const location: Location = {
+  const detected: Location = {
     continent:
       (lang !== 'en' && sameContinent ? pickName(city?.continent?.names, lang) : null) ??
       cleanName(asn?.continent) ??
@@ -140,13 +192,16 @@ export function lookupIp(
     longitude: city?.location?.longitude ?? null,
   };
 
+  const override = store.locationOverride(ip);
+  const location = override ? applyOverride(detected, override, lang) : detected;
+
   let zone: string | null = null;
   if (location.latitude !== null && location.longitude !== null) {
     zone = timezoneAt(location.latitude, location.longitude);
   }
   if (!zone) {
     // No usable coordinates: fall back to the country's zone when it has exactly one.
-    const zones = getCountry(countryCode)?.timezones;
+    const zones = getCountry(location.country_code)?.timezones;
     if (zones?.length === 1) zone = zones[0]!;
   }
 
@@ -174,7 +229,7 @@ export function lookupIp(
     location,
     timezone: timezoneInfo(zone, now),
     network,
-    locale: localeFor(countryCode),
+    locale: localeFor(location.country_code),
     security,
   };
 }

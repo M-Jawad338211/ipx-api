@@ -11,6 +11,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   DATA_DIR,
+  alert,
   fetchJson,
   fetchText,
   isCidr,
@@ -227,7 +228,10 @@ async function main(): Promise<void> {
   if (all || args.has('--tor')) ok = (await updateTor()) && ok;
   if (all || args.has('--hosting')) ok = (await updateHosting()) && ok;
   await notifyReload();
-  if (!ok) process.exitCode = 1;
+  if (!ok) {
+    await alert('update-security: at least one source failed; previous data kept (see logs)');
+    process.exitCode = 1;
+  }
 }
 
 main().catch((error: unknown) => {

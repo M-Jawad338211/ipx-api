@@ -5,11 +5,12 @@ import type { DataStore } from '../data/store.ts';
 import { hasForwardingHeaders } from '../http/client-ip.ts';
 import { HttpError } from '../http/errors.ts';
 import { isLoopback } from '../ip.ts';
+import type { Metrics } from '../metrics.ts';
 import type { Services } from '../services.ts';
 
 export async function systemRoutes(
   app: FastifyInstance,
-  opts: { store: DataStore; services: Services },
+  opts: { store: DataStore; services: Services; metrics: Metrics; metricsToken: string | null },
 ): Promise<void> {
   const { store, services } = opts;
   const typed = app.withTypeProvider<TypeBoxTypeProvider>();
@@ -20,6 +21,7 @@ export async function systemRoutes(
       schema: {
         tags: ['System'],
         operationId: 'health',
+        security: [],
         summary: 'Service health and data freshness',
         description:
           'HTTP 200 when both IP databases are loaded, 503 (`status: "degraded"`) otherwise. Includes the build date and age of each database and list.',
@@ -45,4 +47,17 @@ export async function systemRoutes(
   });
 
   typed.get('/openapi.json', { schema: { hide: true } }, async () => app.swagger());
+
+  // Prometheus scrape endpoint: bearer METRICS_TOKEN, or a local process when no token is set.
+  typed.get('/metrics', { schema: { hide: true } }, async (request, reply) => {
+    const token = opts.metricsToken;
+    const allowed = token
+      ? request.headers.authorization === `Bearer ${token}`
+      : isLoopback(request.socket.remoteAddress) && !hasForwardingHeaders(request.headers);
+    if (!allowed) throw new HttpError(404, 'not_found', 'Route GET /metrics not found');
+    return reply
+      .type('text/plain; version=0.0.4; charset=utf-8')
+      .header('cache-control', 'no-store')
+      .send(opts.metrics.render());
+  });
 }

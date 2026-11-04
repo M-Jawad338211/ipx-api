@@ -33,7 +33,19 @@ export interface DataFiles {
   asn: string;
   tor: string;
   hosting: string;
+  /** Accepted IP corrections (optional), written by scripts/export-corrections.ts. */
+  overrides: string;
 }
+
+/** A reviewed location correction that replaces the database answer for a network. */
+export interface LocationOverride {
+  country_code: string;
+  region: string | null;
+  city: string | null;
+}
+
+/** Freshness thresholds behind the /health warnings (and the alerting script). */
+export const STALE_AFTER = { databaseDays: 45, torHours: 6, hostingHours: 72 } as const;
 
 export function dataFilesIn(dataDir: string, overrides: Partial<DataFiles> = {}): DataFiles {
   return {
@@ -41,6 +53,7 @@ export function dataFilesIn(dataDir: string, overrides: Partial<DataFiles> = {})
     asn: path.join(dataDir, 'ipinfo_lite.mmdb'),
     tor: path.join(dataDir, 'tor-exits.json'),
     hosting: path.join(dataDir, 'hosting-ranges.json'),
+    overrides: path.join(dataDir, 'location-overrides.json'),
     ...overrides,
   };
 }
@@ -78,6 +91,7 @@ export class DataStore {
   asn: Reader<MmdbResponse> | null = null;
   tor: ReadonlySet<string> = new Set();
   hosting: CidrMatcher<string> = new CidrMatcher();
+  overrides: CidrMatcher<LocationOverride> = new CidrMatcher();
   /** Languages available for localized names (from the DB-IP metadata). */
   languages: readonly string[] = ['en'];
 
@@ -97,7 +111,13 @@ export class DataStore {
       entries: 0,
       error: null,
     });
-    this.#status = { city: empty(), asn: empty(), tor: empty(), hosting: empty() };
+    this.#status = {
+      city: empty(),
+      asn: empty(),
+      tor: empty(),
+      hosting: empty(),
+      overrides: empty(),
+    };
   }
 
   /** True when at least one IP database is available. */
@@ -119,6 +139,10 @@ export class DataStore {
 
   hostingProvider(ip: ParsedIp): string | null {
     return this.hosting.match(ip) ?? null;
+  }
+
+  locationOverride(ip: ParsedIp): LocationOverride | null {
+    return this.overrides.size === 0 ? null : (this.overrides.match(ip) ?? null);
   }
 
   /**
@@ -146,7 +170,7 @@ export class DataStore {
 
   async #refresh(force: boolean): Promise<SourceName[]> {
     const reloaded: SourceName[] = [];
-    for (const name of ['city', 'asn', 'tor', 'hosting'] as const) {
+    for (const name of ['city', 'asn', 'tor', 'hosting', 'overrides'] as const) {
       const status = this.#status[name];
       const file = this.files[name];
       let signature: string;
@@ -154,6 +178,12 @@ export class DataStore {
         const info = await stat(file);
         signature = `${info.size}:${info.mtimeMs}`;
       } catch {
+        if (name === 'overrides') {
+          // Optional file: no corrections accepted yet. Drop any previously loaded ones.
+          if (status.loaded) this.overrides = new CidrMatcher();
+          Object.assign(status, { loaded: false, signature: null, entries: 0, error: null });
+          continue;
+        }
         if (status.error === null || !status.error.startsWith('missing')) {
           this.#log.warn({ file }, `data file missing: ${name}`);
         }
@@ -211,6 +241,21 @@ export class DataStore {
       return;
     }
 
+    if (name === 'overrides') {
+      const list = Array.isArray(json.overrides) ? (json.overrides as Record<string, unknown>[]) : [];
+      const matcher = new CidrMatcher<LocationOverride>();
+      const text = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : null);
+      for (const entry of list) {
+        const code = text(entry.country_code)?.toUpperCase();
+        if (!code || !/^[A-Z]{2}$/.test(code) || typeof entry.network !== 'string') continue;
+        matcher.add(entry.network, { country_code: code, region: text(entry.region), city: text(entry.city) });
+      }
+      this.overrides = matcher;
+      status.entries = matcher.size;
+      status.dataDate = Date.parse(String(json.generated_at)) || null;
+      return;
+    }
+
     // hosting: providers in priority order; a later provider wins for an identical prefix
     const providers = (json.providers ?? {}) as Record<string, { ranges?: unknown }>;
     const matcher = new CidrMatcher<string>();
@@ -239,7 +284,7 @@ export class DataStore {
         error: s.error,
       };
     };
-    const list = (name: 'tor' | 'hosting') => {
+    const list = (name: 'tor' | 'hosting' | 'overrides') => {
       const s = this.#status[name];
       return {
         loaded: s.loaded,
@@ -250,13 +295,31 @@ export class DataStore {
         error: s.error,
       };
     };
+    const databases = { city: db('city'), asn: db('asn') };
+    const lists = { tor: list('tor'), hosting: list('hosting'), overrides: list('overrides') };
+    const warnings: string[] = [];
+    for (const [name, d] of Object.entries(databases)) {
+      if (!d.loaded) warnings.push(`${name} database is not loaded`);
+      else if ((d.age_days ?? 0) > STALE_AFTER.databaseDays) {
+        warnings.push(`${name} database is ${Math.floor(d.age_days!)} days old`);
+      }
+    }
+    if (!lists.tor.loaded) warnings.push('tor list is not loaded');
+    else if ((lists.tor.age_hours ?? 0) > STALE_AFTER.torHours) {
+      warnings.push(`tor list is ${Math.floor(lists.tor.age_hours!)} hours old`);
+    }
+    if (!lists.hosting.loaded) warnings.push('hosting list is not loaded');
+    else if ((lists.hosting.age_hours ?? 0) > STALE_AFTER.hostingHours) {
+      warnings.push(`hosting list is ${Math.floor(lists.hosting.age_hours!)} hours old`);
+    }
     return {
       status: this.city && this.asn ? 'ok' : 'degraded',
       uptime_seconds: round(process.uptime(), 1),
       memory_rss_mb: round(process.memoryUsage.rss() / 1e6, 1),
-      databases: { city: db('city'), asn: db('asn') },
-      lists: { tor: list('tor'), hosting: list('hosting') },
+      databases,
+      lists,
       countries: countryCount(),
+      warnings,
     };
   }
 }

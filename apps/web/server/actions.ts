@@ -13,11 +13,13 @@ import {
   signUp,
   verifyEmailCode,
 } from './accounts.ts';
+import { isAdmin, reviewCorrection, submitCorrection } from './corrections.ts';
 import { getDb } from './db.ts';
 import { sendVerificationEmail } from './email.ts';
 import { env } from './env.ts';
 import { allowAttempt } from './ratelimit.ts';
 import { endSession, requestIp, requireUser, startSession } from './session.ts';
+import { verifyTurnstile } from './turnstile.ts';
 
 export interface FormState {
   error?: string;
@@ -125,4 +127,51 @@ export async function revokeKeyAction(form: FormData): Promise<void> {
   const user = await requireUser();
   await revokeKey(getDb(), user.id, field(form, 'keyId'));
   revalidatePath('/dashboard');
+}
+
+export interface CorrectionFormState extends FormState {
+  done?: boolean;
+}
+
+export async function submitCorrectionAction(
+  _prev: CorrectionFormState,
+  form: FormData,
+): Promise<CorrectionFormState> {
+  const ip = await requestIp();
+  if (!(await allowAttempt(`correction:${ip}`, 5, 3600))) {
+    return { error: 'Too many reports from this network. Try again in an hour.' };
+  }
+  if (!(await verifyTurnstile(field(form, 'cf-turnstile-response') || null, ip))) {
+    return { error: 'Please complete the captcha and try again.' };
+  }
+  try {
+    await submitCorrection(
+      getDb(),
+      {
+        ip: field(form, 'ip'),
+        countryCode: field(form, 'country'),
+        region: field(form, 'region'),
+        city: field(form, 'city'),
+        email: field(form, 'email'),
+        note: field(form, 'note'),
+      },
+      ip,
+    );
+  } catch (error) {
+    return failure(error);
+  }
+  return { done: true };
+}
+
+export async function reviewCorrectionAction(form: FormData): Promise<void> {
+  const user = await requireUser();
+  if (!isAdmin(user.email)) throw new Error('Not allowed');
+  const decision = field(form, 'decision') === 'accepted' ? 'accepted' : 'rejected';
+  await reviewCorrection(getDb(), {
+    id: field(form, 'id'),
+    reviewerId: user.id,
+    decision,
+    scope: field(form, 'scope') === 'network' ? 'network' : 'ip',
+  });
+  revalidatePath('/dashboard/corrections');
 }

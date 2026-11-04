@@ -1,0 +1,39 @@
+# Internal reverse proxy behind Cloudflare Tunnel (plain HTTP inside the Docker network).
+# Each upstream pair is health-checked; a copy that is restarting is skipped, and requests that
+# hit it while it stops are retried on the other copy.
+{
+	auto_https off
+	admin off
+}
+
+:80 {
+	@api host {$API_HOST}
+	handle @api {
+		reverse_proxy api-blue:8080 api-green:8080 {
+			lb_policy round_robin
+			lb_try_duration 10s
+			lb_try_interval 250ms
+			health_uri /health
+			health_interval 2s
+			health_timeout 2s
+			fail_duration 10s
+		}
+	}
+
+	@site host {$SITE_HOST} www.{$SITE_HOST}
+	handle @site {
+		reverse_proxy web-blue:3000 web-green:3000 {
+			lb_policy round_robin
+			lb_try_duration 10s
+			lb_try_interval 250ms
+			health_uri /llms.txt
+			health_interval 2s
+			health_timeout 2s
+			fail_duration 10s
+		}
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}

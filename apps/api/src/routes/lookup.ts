@@ -84,7 +84,7 @@ export const OPTIONAL_KEY: SecurityRequirement[] = [{}, { apiKeyQuery: [] }, { b
 export const REQUIRED_KEY: SecurityRequirement[] = [{ apiKeyQuery: [] }, { bearerAuth: [] }];
 
 export const CORS_EXPOSED_HEADERS =
-  'X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After';
+  'X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After, X-Request-Id';
 
 /** Lookups are callable from browsers on any origin (with an Authorization header too). */
 export function addCors(app: FastifyInstance, paths: string[], methods: string): void {

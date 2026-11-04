@@ -2242,6 +2242,7 @@
           "System"
         ],
         "description": "HTTP 200 when both IP databases are loaded, 503 (`status: \"degraded\"`) otherwise. Includes the build date and age of each database and list.",
+        "security": [],
         "responses": {
           "200": {
             "description": "Service health and data freshness.",
@@ -2256,6 +2257,7 @@
                     "databases",
                     "lists",
                     "countries",
+                    "warnings",
                     "services"
                   ],
                   "properties": {
@@ -2426,7 +2428,8 @@
                       "type": "object",
                       "required": [
                         "tor",
-                        "hosting"
+                        "hosting",
+                        "overrides"
                       ],
                       "properties": {
                         "tor": {
@@ -2532,12 +2535,71 @@
                               ]
                             }
                           }
+                        },
+                        "overrides": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "entries",
+                            "updated_at",
+                            "age_hours",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "entries": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When the list was downloaded (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_hours": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Hours since the list was downloaded.",
+                              "examples": [
+                                1.5
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
                         }
                       }
                     },
                     "countries": {
                       "type": "integer",
                       "description": "Countries in the enrichment table."
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Stale or missing data: a database older than 45 days, a Tor list older than 6 hours, a hosting list older than 3 days."
                     },
                     "services": {
                       "type": "object",
@@ -2585,6 +2647,7 @@
                     "databases",
                     "lists",
                     "countries",
+                    "warnings",
                     "services"
                   ],
                   "properties": {
@@ -2755,7 +2818,8 @@
                       "type": "object",
                       "required": [
                         "tor",
-                        "hosting"
+                        "hosting",
+                        "overrides"
                       ],
                       "properties": {
                         "tor": {
@@ -2861,12 +2925,71 @@
                               ]
                             }
                           }
+                        },
+                        "overrides": {
+                          "type": "object",
+                          "required": [
+                            "loaded",
+                            "file",
+                            "entries",
+                            "updated_at",
+                            "age_hours",
+                            "error"
+                          ],
+                          "properties": {
+                            "loaded": {
+                              "type": "boolean"
+                            },
+                            "file": {
+                              "type": "string"
+                            },
+                            "entries": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "When the list was downloaded (ISO 8601).",
+                              "examples": [
+                                null
+                              ]
+                            },
+                            "age_hours": {
+                              "type": [
+                                "null",
+                                "number"
+                              ],
+                              "description": "Hours since the list was downloaded.",
+                              "examples": [
+                                1.5
+                              ]
+                            },
+                            "error": {
+                              "type": [
+                                "null",
+                                "string"
+                              ],
+                              "description": "Last load error, if any.",
+                              "examples": [
+                                null
+                              ]
+                            }
+                          }
                         }
                       }
                     },
                     "countries": {
                       "type": "integer",
                       "description": "Countries in the enrichment table."
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Stale or missing data: a database older than 45 days, a Tor list older than 6 hours, a hosting list older than 3 days."
                     },
                     "services": {
                       "type": "object",
