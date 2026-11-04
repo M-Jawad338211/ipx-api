@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { ANONYMOUS_LIMITS, emailVerificationRequired } from '@ipx/db';
 import type { TrustedProxy } from './http/client-ip.ts';
 
 export interface Config {
@@ -15,6 +16,19 @@ export interface Config {
   tzPreload: boolean;
   /** Base URL advertised in the OpenAPI document. */
   publicUrl: string;
+  /** Postgres (API keys, plans, usage). Without it, requests with a key get 503. */
+  databaseUrl: string | null;
+  /** Redis (rate limits, quotas, usage counters). Without it, limits are not enforced. */
+  redisUrl: string | null;
+  /** Anonymous limits per client IP (IPv6: per /64). */
+  anonPerMinute: number;
+  anonPerDay: number;
+  /** Seconds an API key lookup is cached in memory (revocations take up to this long). */
+  keyCacheSeconds: number;
+  /** Seconds between usage flushes from Redis to Postgres. */
+  usageFlushSeconds: number;
+  /** Keys of accounts with an unconfirmed email are rejected (true when RESEND_API_KEY is set). */
+  emailVerificationRequired: boolean;
 }
 
 /** <repo>/data, resolved from this file so it works from any working directory. */
@@ -57,5 +71,18 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     refreshSeconds: int(env.DATA_REFRESH_SECONDS, 60, 'DATA_REFRESH_SECONDS', 0, 86_400),
     tzPreload: bool(env.TZ_PRELOAD, false, 'TZ_PRELOAD'),
     publicUrl: (env.PUBLIC_API_URL || `http://localhost:${port}`).replace(/\/+$/, ''),
+    databaseUrl: env.DATABASE_URL || null,
+    redisUrl: env.REDIS_URL || null,
+    anonPerMinute: int(
+      env.ANON_LIMIT_PER_MINUTE,
+      ANONYMOUS_LIMITS.perMinute,
+      'ANON_LIMIT_PER_MINUTE',
+      1,
+      1e9,
+    ),
+    anonPerDay: int(env.ANON_LIMIT_PER_DAY, ANONYMOUS_LIMITS.perDay, 'ANON_LIMIT_PER_DAY', 1, 1e9),
+    keyCacheSeconds: int(env.KEY_CACHE_SECONDS, 60, 'KEY_CACHE_SECONDS', 0, 3600),
+    usageFlushSeconds: int(env.USAGE_FLUSH_SECONDS, 60, 'USAGE_FLUSH_SECONDS', 1, 3600),
+    emailVerificationRequired: emailVerificationRequired(env),
   };
 }

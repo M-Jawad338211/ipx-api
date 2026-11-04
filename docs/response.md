@@ -3,22 +3,21 @@ title: Response reference
 description: Every field the IP lookup API returns, where it comes from and when it is null.
 ---
 
-# Response reference
-
 This page documents version 1 of the response (`/v1/...`). The shape is frozen: new fields may be added over time, but existing fields are never removed, renamed or given a different type. Breaking changes would ship under `/v2/`.
 
 ## Endpoints
 
-| Method | Path            | Description                                                               |
-| ------ | --------------- | ------------------------------------------------------------------------- |
-| GET    | `/v1/json`      | Look up the caller's own IP address. Sent with `Cache-Control: no-store`. |
-| GET    | `/v1/json/{ip}` | Look up any IPv4 or IPv6 address.                                         |
-| GET    | `/health`       | Service health and data freshness (HTTP 503 when a database is missing).  |
-| GET    | `/openapi.json` | OpenAPI 3.1 description of the API.                                       |
+| Method | Path            | Description                                                                                   |
+| ------ | --------------- | --------------------------------------------------------------------------------------------- |
+| GET    | `/v1/json`      | Look up the caller's own IP address. Sent with `Cache-Control: no-store`.                     |
+| GET    | `/v1/json/{ip}` | Look up any IPv4 or IPv6 address.                                                             |
+| POST   | `/v1/batch`     | Look up to 100 addresses in one request (needs an API key). See [Batch lookups](/docs/batch). |
+| GET    | `/health`       | Service health and data freshness (HTTP 503 when a database is missing).                      |
+| GET    | `/openapi.json` | OpenAPI 3.1 description of the API.                                                           |
 
 `/json` and `/json/{ip}` (without `/v1`) are aliases kept for compatibility with ip-api-style clients. They return exactly the same responses. A trailing slash is accepted on every path.
 
-Lookup responses carry `Access-Control-Allow-Origin: *`, so they can be called from any website.
+Lookup responses carry `Access-Control-Allow-Origin: *`, so they can be called from any website. Authentication, limits and the `X-RateLimit-*` headers are described in [API keys and limits](/docs/authentication).
 
 ## Query parameters
 
@@ -27,6 +26,7 @@ Lookup responses carry `Access-Control-Allow-Origin: *`, so they can be called f
 | `fields`   | `fields=ip,location.country,security` | Comma-separated list of fields to return. A group name (`location`) returns the whole group; a dotted path (`location.city`, `locale.currency.code`) returns one field. `success` is always included. Unknown names return `400 invalid_request`.                                                                                                           |
 | `lang`     | `lang=de`                             | Language for the `location.continent` and `location.country` names: `en` (default), `de`, `es`, `fr`, `ja`, `pt-BR`, `ru`, `zh-CN`, `fa`, `ko`. Matching ignores case, and a base code picks its only variant (`pt` means `pt-BR`, `zh` means `zh-CN`). Unknown languages fall back to English. City and region names are always English.                   |
 | `callback` | `callback=handleIp`                   | Returns JSONP: `/**/ typeof handleIp === 'function' && handleIp({...});` with `Content-Type: application/javascript`. The name must start with a letter, `_` or `$` and may contain letters, digits, `_`, `$` and `.` (64 characters at most). JSONP responses always use HTTP 200, errors included, because browsers hide the body of failed script loads. |
+| `key`      | `key=ipx_...`                         | API key, as an alternative to the `Authorization: Bearer` header (handy for JSONP). See [API keys and limits](/docs/authentication).                                                                                                                                                                                                                        |
 
 ## Example
 

@@ -6,6 +6,19 @@
     "description": "Geolocation, network, time zone, locale and security data for any IPv4 or IPv6 address. IP data by DB-IP (https://db-ip.com, CC BY 4.0) and IPinfo (https://ipinfo.io, CC BY-SA 4.0)."
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API key from the dashboard: `Authorization: Bearer ipx_...`"
+      },
+      "apiKeyQuery": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key",
+        "description": "API key as a query parameter (for JSONP and quick tests)."
+      }
+    },
     "schemas": {}
   },
   "paths": {
@@ -47,6 +60,15 @@
             "name": "callback",
             "required": false,
             "description": "JSONP callback name (letters, digits, `_`, `$`, `.`). The response becomes `callback({...});` and is always sent with HTTP 200, errors included."
+          }
+        ],
+        "security": [
+          {},
+          {
+            "apiKeyQuery": []
+          },
+          {
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -92,6 +114,9 @@
                     },
                     "reserved": {
                       "type": "boolean",
+                      "examples": [
+                        false
+                      ],
                       "description": "True for private, loopback, link-local, multicast, documentation and other reserved ranges. Location, network and locale fields are then null."
                     },
                     "location": {
@@ -439,18 +464,30 @@
                       "properties": {
                         "is_tor": {
                           "type": "boolean",
+                          "examples": [
+                            false
+                          ],
                           "description": "Whether the IP is a current Tor exit node."
                         },
                         "is_proxy": {
                           "type": "boolean",
+                          "examples": [
+                            false
+                          ],
                           "description": "Whether the IP is a known open or residential proxy. Always false with source \"basic\"."
                         },
                         "is_vpn": {
                           "type": "boolean",
+                          "examples": [
+                            false
+                          ],
                           "description": "Whether the IP belongs to a VPN service. Always false with source \"basic\"."
                         },
                         "is_hosting": {
                           "type": "boolean",
+                          "examples": [
+                            true
+                          ],
                           "description": "Whether the IP is in a published cloud or hosting provider range."
                         },
                         "hosting_provider": {
@@ -482,7 +519,7 @@
             }
           },
           "400": {
-            "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`).",
+            "description": "Invalid IP address (`invalid_ip`) or request (`invalid_request`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -527,13 +564,115 @@
                     }
                   },
                   "additionalProperties": false,
-                  "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`)."
+                  "description": "Invalid IP address (`invalid_ip`) or request (`invalid_request`)."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or revoked API key, or unconfirmed email (`unauthorized`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Missing, invalid or revoked API key, or unconfirmed email (`unauthorized`)."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or monthly quota reached (`rate_limited`). See `Retry-After` and `X-RateLimit-*`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Rate limit or monthly quota reached (`rate_limited`). See `Retry-After` and `X-RateLimit-*`."
                 }
               }
             }
           },
           "503": {
-            "description": "The IP databases are not loaded (`service_unavailable`).",
+            "description": "IP databases not loaded or API keys cannot be checked (`service_unavailable`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -578,7 +717,7 @@
                     }
                   },
                   "additionalProperties": false,
-                  "description": "The IP databases are not loaded (`service_unavailable`)."
+                  "description": "IP databases not loaded or API keys cannot be checked (`service_unavailable`)."
                 }
               }
             }
@@ -636,6 +775,15 @@
             "description": "IPv4 or IPv6 address to look up."
           }
         ],
+        "security": [
+          {},
+          {
+            "apiKeyQuery": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Lookup result for one IP address.",
@@ -679,6 +827,9 @@
                     },
                     "reserved": {
                       "type": "boolean",
+                      "examples": [
+                        false
+                      ],
                       "description": "True for private, loopback, link-local, multicast, documentation and other reserved ranges. Location, network and locale fields are then null."
                     },
                     "location": {
@@ -1026,18 +1177,30 @@
                       "properties": {
                         "is_tor": {
                           "type": "boolean",
+                          "examples": [
+                            false
+                          ],
                           "description": "Whether the IP is a current Tor exit node."
                         },
                         "is_proxy": {
                           "type": "boolean",
+                          "examples": [
+                            false
+                          ],
                           "description": "Whether the IP is a known open or residential proxy. Always false with source \"basic\"."
                         },
                         "is_vpn": {
                           "type": "boolean",
+                          "examples": [
+                            false
+                          ],
                           "description": "Whether the IP belongs to a VPN service. Always false with source \"basic\"."
                         },
                         "is_hosting": {
                           "type": "boolean",
+                          "examples": [
+                            true
+                          ],
                           "description": "Whether the IP is in a published cloud or hosting provider range."
                         },
                         "hosting_provider": {
@@ -1069,7 +1232,7 @@
             }
           },
           "400": {
-            "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`).",
+            "description": "Invalid IP address (`invalid_ip`) or request (`invalid_request`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1114,13 +1277,115 @@
                     }
                   },
                   "additionalProperties": false,
-                  "description": "Invalid IP address (`invalid_ip`) or query parameter (`invalid_request`)."
+                  "description": "Invalid IP address (`invalid_ip`) or request (`invalid_request`)."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or revoked API key, or unconfirmed email (`unauthorized`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Missing, invalid or revoked API key, or unconfirmed email (`unauthorized`)."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or monthly quota reached (`rate_limited`). See `Retry-After` and `X-RateLimit-*`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Rate limit or monthly quota reached (`rate_limited`). See `Retry-After` and `X-RateLimit-*`."
                 }
               }
             }
           },
           "503": {
-            "description": "The IP databases are not loaded (`service_unavailable`).",
+            "description": "IP databases not loaded or API keys cannot be checked (`service_unavailable`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1165,7 +1430,803 @@
                     }
                   },
                   "additionalProperties": false,
-                  "description": "The IP databases are not loaded (`service_unavailable`)."
+                  "description": "IP databases not loaded or API keys cannot be checked (`service_unavailable`)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/batch": {
+      "post": {
+        "operationId": "lookupBatch",
+        "summary": "Look up up to 100 IP addresses",
+        "tags": [
+          "Lookup"
+        ],
+        "description": "Needs an API key. Each address counts as one lookup against the monthly quota. Invalid addresses do not fail the request; they get an item with `success: false`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ips"
+                ],
+                "properties": {
+                  "ips": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "description": "IPv4 and/or IPv6 addresses to look up (1 to 100).",
+                    "examples": [
+                      [
+                        "8.8.8.8",
+                        "2001:4860:4860::8888"
+                      ]
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 2000
+            },
+            "in": "query",
+            "name": "fields",
+            "required": false,
+            "description": "Comma-separated fields to return, e.g. `ip,location.country,security`. A group name (`location`) returns the whole group; `success` is always included."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 35
+            },
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "description": "Language for continent and country names: en (default), de, es, fr, ja, pt-BR, ru, zh-CN, fa, ko. Unknown values fall back to English. City and region names are English only."
+          }
+        ],
+        "security": [
+          {
+            "apiKeyQuery": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Batch lookup result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "count",
+                    "results"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Number of results (same as the number of inputs)."
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "required": [
+                              "success",
+                              "ip",
+                              "type",
+                              "reserved",
+                              "location",
+                              "timezone",
+                              "network",
+                              "locale",
+                              "security"
+                            ],
+                            "properties": {
+                              "success": {
+                                "type": "boolean",
+                                "description": "Always true for a successful lookup.",
+                                "enum": [
+                                  true
+                                ]
+                              },
+                              "ip": {
+                                "type": "string",
+                                "description": "The IP address, normalized (IPv6 compressed, IPv4-mapped IPv6 as IPv4).",
+                                "examples": [
+                                  "8.8.8.8"
+                                ]
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "ipv4",
+                                  "ipv6"
+                                ],
+                                "description": "IP version."
+                              },
+                              "reserved": {
+                                "type": "boolean",
+                                "examples": [
+                                  false
+                                ],
+                                "description": "True for private, loopback, link-local, multicast, documentation and other reserved ranges. Location, network and locale fields are then null."
+                              },
+                              "location": {
+                                "type": "object",
+                                "required": [
+                                  "continent",
+                                  "continent_code",
+                                  "country",
+                                  "country_code",
+                                  "is_eu",
+                                  "region",
+                                  "city",
+                                  "postal",
+                                  "latitude",
+                                  "longitude"
+                                ],
+                                "properties": {
+                                  "continent": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Continent name, localized with `lang=`.",
+                                    "examples": [
+                                      "North America"
+                                    ]
+                                  },
+                                  "continent_code": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Two-letter continent code: AF, AN, AS, EU, NA, OC or SA.",
+                                    "examples": [
+                                      "NA"
+                                    ]
+                                  },
+                                  "country": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Country name, localized with `lang=`.",
+                                    "examples": [
+                                      "United States"
+                                    ]
+                                  },
+                                  "country_code": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "ISO 3166-1 alpha-2 country code.",
+                                    "examples": [
+                                      "US"
+                                    ]
+                                  },
+                                  "is_eu": {
+                                    "type": [
+                                      "null",
+                                      "boolean"
+                                    ],
+                                    "description": "Whether the country is a member state of the European Union.",
+                                    "examples": [
+                                      false
+                                    ]
+                                  },
+                                  "region": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "First-level subdivision (state, province, region). English only.",
+                                    "examples": [
+                                      "California"
+                                    ]
+                                  },
+                                  "city": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "City name. English only.",
+                                    "examples": [
+                                      "Mountain View"
+                                    ]
+                                  },
+                                  "postal": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Postal code. Always null with the free data sources.",
+                                    "examples": [
+                                      null
+                                    ]
+                                  },
+                                  "latitude": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ],
+                                    "description": "Approximate latitude of the city (WGS 84).",
+                                    "examples": [
+                                      37.422
+                                    ]
+                                  },
+                                  "longitude": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ],
+                                    "description": "Approximate longitude of the city (WGS 84).",
+                                    "examples": [
+                                      -122.085
+                                    ]
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "description": "Where the IP address is registered or used."
+                              },
+                              "timezone": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "utc_offset",
+                                  "utc_offset_seconds",
+                                  "is_dst",
+                                  "current_time"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "IANA time zone identifier.",
+                                    "examples": [
+                                      "America/Los_Angeles"
+                                    ]
+                                  },
+                                  "utc_offset": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Current UTC offset as ±HH:MM.",
+                                    "examples": [
+                                      "-08:00"
+                                    ]
+                                  },
+                                  "utc_offset_seconds": {
+                                    "type": [
+                                      "null",
+                                      "integer"
+                                    ],
+                                    "description": "Current UTC offset in seconds.",
+                                    "examples": [
+                                      -28800
+                                    ]
+                                  },
+                                  "is_dst": {
+                                    "type": [
+                                      "null",
+                                      "boolean"
+                                    ],
+                                    "description": "Whether daylight saving time is in effect right now.",
+                                    "examples": [
+                                      false
+                                    ]
+                                  },
+                                  "current_time": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Current local time in ISO 8601 format with offset.",
+                                    "examples": [
+                                      "2026-11-03T05:30:00-08:00"
+                                    ]
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "description": "Time zone at the location, computed per request."
+                              },
+                              "network": {
+                                "type": "object",
+                                "required": [
+                                  "asn",
+                                  "as_name",
+                                  "as_domain"
+                                ],
+                                "properties": {
+                                  "asn": {
+                                    "type": [
+                                      "null",
+                                      "integer"
+                                    ],
+                                    "description": "Autonomous system number.",
+                                    "examples": [
+                                      15169
+                                    ]
+                                  },
+                                  "as_name": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Name of the organization that operates the AS.",
+                                    "examples": [
+                                      "Google LLC"
+                                    ]
+                                  },
+                                  "as_domain": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Primary domain of the AS operator.",
+                                    "examples": [
+                                      "google.com"
+                                    ]
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "description": "The autonomous system that announces the IP."
+                              },
+                              "locale": {
+                                "type": "object",
+                                "required": [
+                                  "flag",
+                                  "calling_code",
+                                  "currency",
+                                  "languages"
+                                ],
+                                "properties": {
+                                  "flag": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Country flag emoji.",
+                                    "examples": [
+                                      "🇺🇸"
+                                    ]
+                                  },
+                                  "calling_code": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "International calling code.",
+                                    "examples": [
+                                      "+1"
+                                    ]
+                                  },
+                                  "currency": {
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "required": [
+                                          "code",
+                                          "name",
+                                          "symbol"
+                                        ],
+                                        "properties": {
+                                          "code": {
+                                            "type": "string",
+                                            "description": "ISO 4217 currency code.",
+                                            "examples": [
+                                              "USD"
+                                            ]
+                                          },
+                                          "name": {
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ],
+                                            "description": "Currency name in English.",
+                                            "examples": [
+                                              "United States dollar"
+                                            ]
+                                          },
+                                          "symbol": {
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ],
+                                            "description": "Currency symbol.",
+                                            "examples": [
+                                              "$"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ],
+                                    "description": "Main currency of the country, or null when unknown."
+                                  },
+                                  "languages": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "required": [
+                                        "code",
+                                        "name"
+                                      ],
+                                      "properties": {
+                                        "code": {
+                                          "type": "string",
+                                          "description": "ISO 639-3 language code.",
+                                          "examples": [
+                                            "eng"
+                                          ]
+                                        },
+                                        "name": {
+                                          "type": "string",
+                                          "description": "Language name in English.",
+                                          "examples": [
+                                            "English"
+                                          ]
+                                        }
+                                      },
+                                      "additionalProperties": false
+                                    },
+                                    "description": "Official or main languages of the country; empty when unknown."
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "description": "Country facts derived from the country code."
+                              },
+                              "security": {
+                                "type": "object",
+                                "required": [
+                                  "is_tor",
+                                  "is_proxy",
+                                  "is_vpn",
+                                  "is_hosting",
+                                  "hosting_provider",
+                                  "source"
+                                ],
+                                "properties": {
+                                  "is_tor": {
+                                    "type": "boolean",
+                                    "examples": [
+                                      false
+                                    ],
+                                    "description": "Whether the IP is a current Tor exit node."
+                                  },
+                                  "is_proxy": {
+                                    "type": "boolean",
+                                    "examples": [
+                                      false
+                                    ],
+                                    "description": "Whether the IP is a known open or residential proxy. Always false with source \"basic\"."
+                                  },
+                                  "is_vpn": {
+                                    "type": "boolean",
+                                    "examples": [
+                                      false
+                                    ],
+                                    "description": "Whether the IP belongs to a VPN service. Always false with source \"basic\"."
+                                  },
+                                  "is_hosting": {
+                                    "type": "boolean",
+                                    "examples": [
+                                      true
+                                    ],
+                                    "description": "Whether the IP is in a published cloud or hosting provider range."
+                                  },
+                                  "hosting_provider": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ],
+                                    "description": "Provider whose published ranges contain the IP.",
+                                    "examples": [
+                                      "Google"
+                                    ]
+                                  },
+                                  "source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "basic"
+                                    ],
+                                    "description": "Which security dataset produced these flags. \"basic\" = public Tor and cloud lists only."
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "description": "Risk signals merged from public IP lists."
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Lookup result for one IP address."
+                          },
+                          {
+                            "type": "object",
+                            "required": [
+                              "success",
+                              "ip",
+                              "error"
+                            ],
+                            "properties": {
+                              "success": {
+                                "type": "boolean",
+                                "enum": [
+                                  false
+                                ]
+                              },
+                              "ip": {
+                                "type": "string",
+                                "description": "The input exactly as sent."
+                              },
+                              "error": {
+                                "type": "object",
+                                "required": [
+                                  "code",
+                                  "message"
+                                ],
+                                "properties": {
+                                  "code": {
+                                    "type": "string",
+                                    "enum": [
+                                      "invalid_ip"
+                                    ],
+                                    "description": "Why this item failed."
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Result for an input that is not a valid IP."
+                          }
+                        ]
+                      },
+                      "description": "One entry per input, in the same order: a lookup result (filtered by `fields=` when given) or an item error."
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Batch lookup result."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid IP address (`invalid_ip`) or request (`invalid_request`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Invalid IP address (`invalid_ip`) or request (`invalid_request`)."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or revoked API key, or unconfirmed email (`unauthorized`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Missing, invalid or revoked API key, or unconfirmed email (`unauthorized`)."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or monthly quota reached (`rate_limited`). See `Retry-After` and `X-RateLimit-*`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "Rate limit or monthly quota reached (`rate_limited`). See `Retry-After` and `X-RateLimit-*`."
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "IP databases not loaded or API keys cannot be checked (`service_unavailable`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "invalid_ip",
+                            "invalid_request",
+                            "unauthorized",
+                            "not_found",
+                            "rate_limited",
+                            "service_unavailable",
+                            "internal_error"
+                          ],
+                          "description": "Machine-readable error code."
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Human-readable explanation."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "description": "IP databases not loaded or API keys cannot be checked (`service_unavailable`)."
                 }
               }
             }
@@ -1194,7 +2255,8 @@
                     "memory_rss_mb",
                     "databases",
                     "lists",
-                    "countries"
+                    "countries",
+                    "services"
                   ],
                   "properties": {
                     "status": {
@@ -1476,6 +2538,33 @@
                     "countries": {
                       "type": "integer",
                       "description": "Countries in the enrichment table."
+                    },
+                    "services": {
+                      "type": "object",
+                      "required": [
+                        "redis",
+                        "database"
+                      ],
+                      "properties": {
+                        "redis": {
+                          "type": "string",
+                          "enum": [
+                            "ok",
+                            "error",
+                            "disabled"
+                          ],
+                          "description": "Rate limits and usage counters."
+                        },
+                        "database": {
+                          "type": "string",
+                          "enum": [
+                            "ok",
+                            "error",
+                            "disabled"
+                          ],
+                          "description": "API keys and accounts."
+                        }
+                      }
                     }
                   },
                   "description": "Service health and data freshness."
@@ -1495,7 +2584,8 @@
                     "memory_rss_mb",
                     "databases",
                     "lists",
-                    "countries"
+                    "countries",
+                    "services"
                   ],
                   "properties": {
                     "status": {
@@ -1777,6 +2867,33 @@
                     "countries": {
                       "type": "integer",
                       "description": "Countries in the enrichment table."
+                    },
+                    "services": {
+                      "type": "object",
+                      "required": [
+                        "redis",
+                        "database"
+                      ],
+                      "properties": {
+                        "redis": {
+                          "type": "string",
+                          "enum": [
+                            "ok",
+                            "error",
+                            "disabled"
+                          ],
+                          "description": "Rate limits and usage counters."
+                        },
+                        "database": {
+                          "type": "string",
+                          "enum": [
+                            "ok",
+                            "error",
+                            "disabled"
+                          ],
+                          "description": "API keys and accounts."
+                        }
+                      }
                     }
                   },
                   "description": "Service health and data freshness."

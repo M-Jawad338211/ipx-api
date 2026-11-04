@@ -11,8 +11,10 @@ import type { Config } from './config.ts';
 import { DataStore, dataFilesIn, type DataFiles } from './data/store.ts';
 import { HttpError, errorBody } from './http/errors.ts';
 import { isValidCallback, jsonpBody } from './http/format.ts';
+import { batchRoutes } from './routes/batch.ts';
 import { JSON_TYPE, JS_TYPE, lookupRoutes } from './routes/lookup.ts';
 import { systemRoutes } from './routes/system.ts';
+import { Services } from './services.ts';
 
 declare module 'fastify' {
   interface FastifyContextConfig {
@@ -21,6 +23,7 @@ declare module 'fastify' {
   }
   interface FastifyInstance {
     store: DataStore;
+    services: Services;
   }
 }
 
@@ -31,6 +34,11 @@ export interface AppOptions {
   files?: Partial<DataFiles>;
   /** Fastify logger option; defaults to pino at config.logLevel. */
   logger?: boolean | { level: string };
+}
+
+/** Keeps API keys out of logs (`?key=...` in request URLs). */
+export function redactUrl(url: string): string {
+  return url.replace(/([?&]key=)[^&]*/gi, '$1***');
 }
 
 function sendError(
@@ -60,7 +68,18 @@ function sendError(
 export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
   const { config } = options;
   const app = Fastify({
-    logger: options.logger ?? { level: config.logLevel },
+    logger:
+      options.logger === false
+        ? false
+        : {
+            level: options.logger === true ? 'info' : (options.logger?.level ?? config.logLevel),
+            serializers: {
+              req: (req: { method: string; url: string; ip?: string }) => ({
+                method: req.method,
+                url: redactUrl(req.url),
+              }),
+            },
+          },
     logController: new LogController({ disableRequestLogging: !config.logRequests }),
     routerOptions: { ignoreTrailingSlash: true },
     trustProxy: false,
@@ -82,6 +101,9 @@ export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
 
   const store = options.store ?? new DataStore(dataFilesIn(config.dataDir, options.files), app.log);
   app.decorate('store', store);
+  const services = new Services(config, app.log);
+  app.decorate('services', services);
+  app.addHook('onClose', async () => services.close());
 
   await app.register(swagger, {
     openapi: {
@@ -97,6 +119,21 @@ export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
         { name: 'Lookup', description: 'IP address lookups.' },
         { name: 'System', description: 'Health and operations.' },
       ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            description: 'API key from the dashboard: `Authorization: Bearer ipx_...`',
+          },
+          apiKeyQuery: {
+            type: 'apiKey',
+            in: 'query',
+            name: 'key',
+            description: 'API key as a query parameter (for JSONP and quick tests).',
+          },
+        },
+      },
     },
   });
 
@@ -133,10 +170,11 @@ export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
     );
   });
 
-  const routeOptions = { store, trustedProxy: config.trustedProxy };
+  const routeOptions = { store, access: services };
   await app.register(lookupRoutes, { ...routeOptions, prefix: '/v1', documented: true });
   await app.register(lookupRoutes, { ...routeOptions, documented: false }); // ip-api-style aliases
-  await app.register(systemRoutes, { store });
+  await app.register(batchRoutes, { ...routeOptions, prefix: '/v1' });
+  await app.register(systemRoutes, { store, services });
 
   return app;
 }

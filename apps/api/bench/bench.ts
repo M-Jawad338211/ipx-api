@@ -8,6 +8,13 @@ import path from 'node:path';
 import autocannon, { type Result } from 'autocannon';
 import { isReserved, ipv4ToString, parseIp, bigIntToIpv6 } from '../src/ip.ts';
 
+// Use the repo .env (REDIS_URL, DATABASE_URL) so the rate limiter runs as in production.
+try {
+  process.loadEnvFile(path.resolve(import.meta.dirname, '../../../.env'));
+} catch {
+  // no .env
+}
+
 const PORT = Number(process.env.BENCH_PORT || 18_081);
 const BASE = `http://127.0.0.1:${PORT}`;
 const DURATION = Number(process.env.BENCH_DURATION || 15);
@@ -88,12 +95,19 @@ const server = spawn(process.execPath, [path.resolve(import.meta.dirname, '../sr
     HOST: '127.0.0.1',
     LOG_LEVEL: 'warn',
     DATA_REFRESH_SECONDS: '0',
+    // Every request still runs the Redis limiter script; the limits are just out of reach.
+    ANON_LIMIT_PER_MINUTE: '1000000000',
+    ANON_LIMIT_PER_DAY: '1000000000',
   },
   stdio: ['ignore', 'inherit', 'inherit'],
 });
 
 try {
   await waitForHealth(60_000);
+  const probe = await fetch(`${BASE}${nextIp()}`);
+  if (!probe.ok) {
+    throw new Error(`Sanity request failed: HTTP ${probe.status} ${await probe.text()}`);
+  }
   console.log(`Warming up (5 s, ${ips.length} distinct random IPs)...`);
   await run(scenarios[0]!, 5);
 
@@ -103,6 +117,7 @@ try {
     console.log(`Running: ${scenario.name} (${DURATION} s)`);
     const r = await run(scenario, DURATION);
     const failures = r.errors + r.timeouts + r.non2xx;
+    if (failures > 0) console.log(`  failures: ${JSON.stringify({ errors: r.errors, timeouts: r.timeouts, non2xx: r.non2xx, codes: r.statusCodeStats })}`);
     rows.push([
       scenario.name,
       Math.round(r.requests.average).toLocaleString('en-US'),

@@ -9,6 +9,8 @@ address, served from in-memory `.mmdb` databases. See [PLAN.md](PLAN.md) for the
 | Path              | What                                                          |
 | ----------------- | ------------------------------------------------------------- |
 | `apps/api`        | Fastify service (Node 22 runs the TypeScript directly)        |
+| `apps/web`        | Next.js 16 site: landing, docs (Fumadocs), sign-up, dashboard |
+| `packages/db`     | Drizzle schema, migrations, plans, API-key helpers            |
 | `packages/shared` | Response schemas (TypeBox) and the generated `openapi.json`   |
 | `scripts`         | Data updaters: IP databases, Tor/hosting lists, country table |
 | `data`            | Downloaded databases and lists (git-ignored)                  |
@@ -21,9 +23,15 @@ pnpm install
 cp .env.example .env            # add IPINFO_TOKEN
 pnpm update-db                  # DB-IP City Lite + IPinfo Lite -> data/
 pnpm update-security            # Tor exits + cloud ranges -> data/
-pnpm dev                        # http://localhost:8080
+docker compose up -d postgres redis
+pnpm db:migrate                 # tables + plans
+pnpm dev                        # API on http://localhost:8080
+pnpm dev:web                    # website on http://localhost:3000
 curl localhost:8080/json/8.8.8.8
 ```
+
+Without `RESEND_API_KEY`, accounts work right after sign-up. With it, users confirm their
+email with a 6-digit code before API keys work.
 
 With Docker (API + Postgres + Redis, `data/` mounted into the container):
 
@@ -36,16 +44,18 @@ docker compose exec api node scripts/update-security.ts   # refresh lists, hot r
 
 ## Commands
 
-| Command                | What it does                                                          |
-| ---------------------- | --------------------------------------------------------------------- |
-| `pnpm check`           | Typecheck, lint and test every package (Turborepo)                    |
-| `pnpm test`            | Tests (needs `data/`); `RUN_LIVE_TESTS=1` adds the live Tor-list test |
-| `pnpm bench`           | autocannon load test against a local single-process server            |
-| `pnpm openapi`         | Regenerate `packages/shared/openapi.json` from the route schemas      |
-| `pnpm update-db`       | Download DB-IP City Lite and IPinfo Lite (`--force` to re-download)   |
-| `pnpm update-security` | Download Tor exits (`--tor`) and hosting ranges (`--hosting`)         |
-| `pnpm build-countries` | Rebuild `apps/api/src/enrich/countries.json` (committed)              |
-| `pnpm format`          | Prettier                                                              |
+| Command                | What it does                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm check`           | Typecheck, lint and test every package (Turborepo)                                  |
+| `pnpm test`            | Tests (need `data/`, Postgres and Redis); `RUN_LIVE_TESTS=1` adds the live Tor test |
+| `pnpm bench`           | autocannon load test against a local single-process server                          |
+| `pnpm openapi`         | Regenerate `packages/shared/openapi.json` from the route schemas                    |
+| `pnpm update-db`       | Download DB-IP City Lite and IPinfo Lite (`--force` to re-download)                 |
+| `pnpm update-security` | Download Tor exits (`--tor`) and hosting ranges (`--hosting`)                       |
+| `pnpm build-countries` | Rebuild `apps/api/src/enrich/countries.json` (committed)                            |
+| `pnpm db:migrate`      | Apply database migrations and upsert the plan catalogue                             |
+| `pnpm db:generate`     | Generate a migration after changing `packages/db/src/schema.ts`                     |
+| `pnpm format`          | Prettier                                                                            |
 
 Data files are reloaded without a restart: the update scripts call `POST /internal/reload`
 (accepted only from a local process), and the API also re-checks `data/` every 60 seconds.

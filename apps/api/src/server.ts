@@ -19,6 +19,8 @@ if (config.tzPreload) {
   app.log.info({ ms: Date.now() - started }, 'timezone polygons preloaded');
 }
 store.startAutoRefresh(config.refreshSeconds);
+await app.services.connect();
+app.services.startBackgroundJobs();
 
 await app.listen({ host: config.host, port: config.port });
 

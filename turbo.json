@@ -12,7 +12,11 @@
     "test": {
       "dependsOn": ["openapi"],
       "cache": false,
-      "passThroughEnv": ["DATA_DIR", "RUN_LIVE_TESTS"]
+      "passThroughEnv": ["DATA_DIR", "RUN_LIVE_TESTS", "TEST_DATABASE_SERVER", "TEST_REDIS_URL"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
     }
   }
 }

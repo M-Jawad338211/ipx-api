@@ -18,7 +18,11 @@
     "bench": "pnpm --filter @ipx/api bench",
     "update-db": "node --env-file-if-exists=.env scripts/update-db.ts",
     "update-security": "node --env-file-if-exists=.env scripts/update-security.ts",
-    "build-countries": "node scripts/build-countries.ts"
+    "build-countries": "node scripts/build-countries.ts",
+    "db:migrate": "pnpm --filter @ipx/db migrate",
+    "db:generate": "pnpm --filter @ipx/db generate",
+    "dev:web": "pnpm --filter @ipx/web dev",
+    "build": "turbo run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -30,6 +30,7 @@ export async function createTestApp(
   });
   const app = await buildApp({ config, logger: false, files: options.files });
   await app.store.refresh();
+  await app.services.connect();
   await app.ready();
   return app;
 }

@@ -226,7 +226,7 @@ export class DataStore {
     status.dataDate = Date.parse(String(json.generated_at)) || null;
   }
 
-  health(now: number = Date.now()): Health {
+  health(now: number = Date.now()): Omit<Health, 'services'> {
     const db = (name: 'city' | 'asn') => {
       const s = this.#status[name];
       return {

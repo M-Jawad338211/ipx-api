@@ -11,6 +11,7 @@ RUN npm install -g pnpm@11.21.0
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json apps/api/
 COPY packages/shared/package.json packages/shared/
+COPY packages/db/package.json packages/db/
 COPY scripts/package.json scripts/
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile --prod --filter "@ipx/api..." --filter "@ipx/scripts..."
@@ -24,6 +25,7 @@ ENV NODE_ENV=production \
 WORKDIR /app
 COPY --from=deps /app /app
 COPY packages/shared packages/shared
+COPY packages/db packages/db
 COPY apps/api/src apps/api/src
 COPY scripts scripts
 RUN mkdir -p /app/data && chown node:node /app/data

@@ -25,6 +25,7 @@ declare module 'autocannon' {
     errors: number;
     timeouts: number;
     non2xx: number;
+    statusCodeStats?: Record<string, { count: number }>;
   }
   function autocannon(options: Options): Promise<Result>;
   export default autocannon;

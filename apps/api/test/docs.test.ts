@@ -22,7 +22,7 @@ describe('docs/response.md', () => {
   });
 
   it('does not document fields that do not exist', () => {
-    const params = new Set(['fields', 'lang', 'callback']);
+    const params = new Set(['fields', 'lang', 'callback', 'key']);
     const known = new Set([...IP_LOOKUP_FIELDS, ...ERROR_CODES, ...params]);
     expect([...documentedFields].filter((name) => !known.has(name))).toEqual([]);
   });
@@ -50,6 +50,11 @@ describe('packages/shared/openapi.json', () => {
       paths: Record<string, unknown>;
     };
     expect(spec.openapi).toBe('3.1.0');
-    expect(Object.keys(spec.paths).sort()).toEqual(['/health', '/v1/json', '/v1/json/{ip}']);
+    expect(Object.keys(spec.paths).sort()).toEqual([
+      '/health',
+      '/v1/batch',
+      '/v1/json',
+      '/v1/json/{ip}',
+    ]);
   });
 });

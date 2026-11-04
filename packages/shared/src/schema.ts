@@ -123,15 +123,21 @@ export const Locale = Type.Object(
 
 export const Security = Type.Object(
   {
-    is_tor: Type.Boolean({ description: 'Whether the IP is a current Tor exit node.' }),
+    is_tor: Type.Boolean({
+      examples: [false],
+      description: 'Whether the IP is a current Tor exit node.',
+    }),
     is_proxy: Type.Boolean({
+      examples: [false],
       description:
         'Whether the IP is a known open or residential proxy. Always false with source "basic".',
     }),
     is_vpn: Type.Boolean({
+      examples: [false],
       description: 'Whether the IP belongs to a VPN service. Always false with source "basic".',
     }),
     is_hosting: Type.Boolean({
+      examples: [true],
       description: 'Whether the IP is in a published cloud or hosting provider range.',
     }),
     hosting_provider: nullable(
@@ -156,6 +162,7 @@ export const IpLookup = Type.Object(
     }),
     type: stringEnum(['ipv4', 'ipv6'] as const, 'IP version.'),
     reserved: Type.Boolean({
+      examples: [false],
       description:
         'True for private, loopback, link-local, multicast, documentation and other reserved ranges. Location, network and locale fields are then null.',
     }),
@@ -180,6 +187,47 @@ export const ApiError = Type.Object(
     ),
   },
   { additionalProperties: false, description: 'Error response.' },
+);
+
+export const BATCH_MAX_IPS = 100;
+
+export const BatchRequest = Type.Object(
+  {
+    ips: Type.Array(Type.String({ maxLength: 100 }), {
+      minItems: 1,
+      maxItems: BATCH_MAX_IPS,
+      description: `IPv4 and/or IPv6 addresses to look up (1 to ${BATCH_MAX_IPS}).`,
+      examples: [['8.8.8.8', '2001:4860:4860::8888']],
+    }),
+  },
+  { additionalProperties: false },
+);
+
+export const BatchItemError = Type.Object(
+  {
+    success: Type.Literal(false),
+    ip: Type.String({ description: 'The input exactly as sent.' }),
+    error: Type.Object(
+      {
+        code: stringEnum(['invalid_ip'] as const, 'Why this item failed.'),
+        message: Type.String(),
+      },
+      { additionalProperties: false },
+    ),
+  },
+  { additionalProperties: false, description: 'Result for an input that is not a valid IP.' },
+);
+
+export const BatchResponse = Type.Object(
+  {
+    success: Type.Literal(true),
+    count: Type.Integer({ description: 'Number of results (same as the number of inputs).' }),
+    results: Type.Array(Type.Union([IpLookup, BatchItemError]), {
+      description:
+        'One entry per input, in the same order: a lookup result (filtered by `fields=` when given) or an item error.',
+    }),
+  },
+  { additionalProperties: false, description: 'Batch lookup result.' },
 );
 
 const DatabaseStatus = Type.Object({
@@ -212,6 +260,10 @@ export const Health = Type.Object(
     databases: Type.Object({ city: DatabaseStatus, asn: DatabaseStatus }),
     lists: Type.Object({ tor: ListStatus, hosting: ListStatus }),
     countries: Type.Integer({ description: 'Countries in the enrichment table.' }),
+    services: Type.Object({
+      redis: stringEnum(['ok', 'error', 'disabled'] as const, 'Rate limits and usage counters.'),
+      database: stringEnum(['ok', 'error', 'disabled'] as const, 'API keys and accounts.'),
+    }),
   },
   { description: 'Service health and data freshness.' },
 );
@@ -224,6 +276,9 @@ export type Locale = Type.Static<typeof Locale>;
 export type Security = Type.Static<typeof Security>;
 export type ApiError = Type.Static<typeof ApiError>;
 export type Health = Type.Static<typeof Health>;
+export type BatchRequest = Type.Static<typeof BatchRequest>;
+export type BatchItemError = Type.Static<typeof BatchItemError>;
+export type BatchResponse = Type.Static<typeof BatchResponse>;
 
 /**
  * Every selectable path for `fields=`, in schema order: top-level fields, group names

@@ -5,12 +5,13 @@ import type { DataStore } from '../data/store.ts';
 import { hasForwardingHeaders } from '../http/client-ip.ts';
 import { HttpError } from '../http/errors.ts';
 import { isLoopback } from '../ip.ts';
+import type { Services } from '../services.ts';
 
 export async function systemRoutes(
   app: FastifyInstance,
-  opts: { store: DataStore },
+  opts: { store: DataStore; services: Services },
 ): Promise<void> {
-  const { store } = opts;
+  const { store, services } = opts;
   const typed = app.withTypeProvider<TypeBoxTypeProvider>();
 
   typed.get(
@@ -26,7 +27,7 @@ export async function systemRoutes(
       },
     },
     async (_request, reply) => {
-      const health = store.health();
+      const health = { ...store.health(), services: await services.status() };
       reply.code(health.status === 'ok' ? 200 : 503).header('cache-control', 'no-store');
       return health;
     },
@@ -40,7 +41,7 @@ export async function systemRoutes(
     }
     const reloaded = await store.refresh(true);
     request.log.info({ reloaded }, 'data reload requested');
-    return { success: true, reloaded, health: store.health() };
+    return { success: true, reloaded };
   });
 
   typed.get('/openapi.json', { schema: { hide: true } }, async () => app.swagger());
